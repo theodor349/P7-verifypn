@@ -14,3 +14,5 @@ src/LTL/SuccessorGeneration/HeuristicParser.parser.cpp
 src/LTL/SuccessorGeneration/HeuristicParser.parser.hpp
 build/
 
+/.vs
+/src/PetriEngine/.vs
