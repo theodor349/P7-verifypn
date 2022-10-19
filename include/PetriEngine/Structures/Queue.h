@@ -96,6 +96,8 @@ namespace PetriEngine {
             virtual size_t pop();
             virtual void push(size_t id, PQL::DistanceContext*,
                 const PQL::Condition* query);
+	    virtual void randomPush(size_t id, PQL::DistanceContext*,
+                const PQL::Condition* query);
             virtual bool empty() const override;
         private:
             std::priority_queue<weighted_t> _queue;
