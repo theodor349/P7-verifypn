@@ -96,7 +96,30 @@ namespace PetriEngine {
             virtual size_t pop();
             virtual void push(size_t id, PQL::DistanceContext*,
                 const PQL::Condition* query);
-	    virtual void randomPush(size_t id, PQL::DistanceContext*,
+            virtual bool empty() const override;
+        private:
+            std::priority_queue<weighted_t> _queue;
+        };
+
+	//cs-22-dat-7-02
+        class RandHeuristicQueue : public Queue {
+        public:
+            struct weighted_t {
+                uint32_t weight;
+                uint32_t item;
+                weighted_t(uint32_t w, uint32_t i) : weight(w), item(i) {};
+                bool operator <(const weighted_t& y) const {
+                    if(weight == y.weight) return item < y.item;// do dfs if they match
+//                    if(weight == y.weight) return item > y.item;// do bfs if they match
+                    return weight > y.weight;
+                }
+            };
+
+            RandHeuristicQueue(size_t);
+            virtual ~RandHeuristicQueue();
+
+            virtual size_t pop();
+            virtual void push(size_t id, PQL::DistanceContext*,
                 const PQL::Condition* query);
             virtual bool empty() const override;
         private:
