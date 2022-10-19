@@ -156,6 +156,9 @@ namespace PetriEngine {
         {
             // invert result, highest numbers are on top!
             uint32_t dist = query->distance(*context);
+	    //andreas
+	    std::cout << dist;
+	    std::cout << '\n';
             _queue.emplace(dist, (uint32_t)id);
         }
 
@@ -163,5 +166,19 @@ namespace PetriEngine {
             return _queue.empty();
         }
 
+	//cs-22-dat-7-02
+        void HeuristicQueue::randomPush(size_t id, PQL::DistanceContext* context,
+            const PQL::Condition* query)
+        {
+            // invert result, highest numbers are on top!
+            uint32_t dist = query->distance(*context);
+	    //cs-22-dat-7-02
+	    float randValue = rand()%(120-80)+80;
+	    randValue /= 100;
+	    dist *= randValue;
+	    //Do we want to allow distance to hit 0 without being 0?
+	    //dist = dist == 0 ? 1 : test;
+            _queue.emplace(dist, (uint32_t)id);
+        }
     }
 }
