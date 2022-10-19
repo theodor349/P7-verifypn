@@ -164,7 +164,10 @@ namespace PetriEngine {
         }
 
 	//cs-22-dat-7-02
-        RandHeuristicQueue::RandHeuristicQueue(size_t) : Queue() {}
+        RandHeuristicQueue::RandHeuristicQueue(size_t seed) : Queue() {
+		//_rng.seed(seed);
+		_seed = seed;
+	}
         RandHeuristicQueue::~RandHeuristicQueue(){}
 
         size_t RandHeuristicQueue::pop()
@@ -181,7 +184,7 @@ namespace PetriEngine {
             // invert result, highest numbers are on top!
             uint32_t dist = query->distance(*context);
 	    //TODO: add range rather than +- 20%.
-	    //TODO: add seed for RNG
+	    srand(_seed);
 	    float randValue = rand()%(120-80)+80;
 	    randValue /= 100;
 	    dist *= randValue;

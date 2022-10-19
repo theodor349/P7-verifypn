@@ -115,7 +115,7 @@ namespace PetriEngine {
                 }
             };
 
-            RandHeuristicQueue(size_t);
+            RandHeuristicQueue(size_t seed);
             virtual ~RandHeuristicQueue();
 
             virtual size_t pop();
@@ -124,6 +124,7 @@ namespace PetriEngine {
             virtual bool empty() const override;
         private:
             std::priority_queue<weighted_t> _queue;
+	    size_t _seed;
         };
     }
 }
