@@ -17,6 +17,7 @@ enum class Strategy {
     DFS,
     HEUR,
     RDFS,
+    RANDHEUR,
     OverApprox,
     DEFAULT
 };

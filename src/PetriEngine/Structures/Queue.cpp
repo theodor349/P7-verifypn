@@ -180,7 +180,6 @@ namespace PetriEngine {
         {
             // invert result, highest numbers are on top!
             uint32_t dist = query->distance(*context);
-	    //cs-22-dat-7-02
 	    //TODO: add range rather than +- 20%.
 	    //TODO: add seed for RNG
 	    float randValue = rand()%(120-80)+80;

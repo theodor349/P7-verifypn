@@ -151,6 +151,8 @@ namespace PetriEngine {
                 case Strategy::RDFS:
                     TRYREACH(RDFSQueue)
                     break;
+		case Strategy::RANDHEUR:
+		    TRYREACH(RandHeuristicQueue)
                 default:
                     throw base_error("Unsupported search strategy");
             }
