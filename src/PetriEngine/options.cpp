@@ -132,6 +132,7 @@ void printHelp() {
         "                                       - BFS          Breadth first search\n"
         "                                       - DFS          Depth first search (CTL default)\n"
         "                                       - RDFS         Random depth first search\n"
+	"                                       - RBestFS      Random Heuristic search\n"
         "                                       - OverApprox   Linear Over Approx\n"
         "  --seed-offset <number>               Extra noise to add to the seed of the random number generation\n"
         "  -e, --state-space-exploration        State-space exploration only (query-file is irrelevant)\n"
