@@ -100,6 +100,56 @@ namespace PetriEngine {
         private:
             std::priority_queue<weighted_t> _queue;
         };
+
+        /*********************************************************************/
+        /*                           POTENCY BOIIS                           */
+        /*********************************************************************/
+
+        class PotencyQueue : public Queue
+        {
+        public:
+            struct weighted_t
+            {
+                uint32_t weight;
+                uint32_t item;
+                weighted_t(uint32_t w, uint32_t i) : weight(w), item(i){};
+                bool operator<(const weighted_t &y) const
+                {
+                    if (weight == y.weight)
+                        return item < y.item;
+                    return weight > y.weight;
+                }
+            };
+
+            struct potency_t
+            {
+                uint32_t value;
+                size_t prev;
+                size_t next;
+                potency_t(uint32_t v, size_t p, size_t n) : value(v), prev(p), next(n){};
+            };
+
+            PotencyQueue(size_t nTransitions);
+            ~PotencyQueue() override;
+
+            size_t pop() override;
+            std::tuple<uint32_t, uint32_t> poop();
+            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query) override;
+            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
+                              uint32_t pDist);
+                
+            bool empty() const override;
+
+        private:
+            size_t _size = 0;
+            size_t _best;
+            std::vector<potency_t> _potencies;
+            std::vector<std::priority_queue<weighted_t>> _queues;
+        };
+
+        /*********************************************************************/
+        /*                           POTENCY BOIIS                           */
+        /*********************************************************************/
     }
 }
 

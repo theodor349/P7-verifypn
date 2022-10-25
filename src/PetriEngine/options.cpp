@@ -33,6 +33,8 @@ void options_t::print(std::ostream& optionsOut) {
         optionsOut << "\nSearch=HEUR";
     } else if (strategy == Strategy::RDFS) {
         optionsOut << "\nSearch=RDFS";
+    } else if (strategy == Strategy::POTENCYFS) {
+        optionsOut << "\nSearch=POTENCYFS";
     } else {
         optionsOut << "\nSearch=OverApprox";
     }
@@ -261,6 +263,8 @@ bool options_t::parse(int argc, const char** argv) {
                 strategy = Strategy::DFS;
             else if (std::strcmp(s, "RDFS") == 0)
                 strategy = Strategy::RDFS;
+            else if (std::strcmp(s, "POTENCYFS") == 0)
+                strategy = Strategy::POTENCYFS;
             else if (std::strcmp(s, "OverApprox") == 0)
                 strategy = Strategy::OverApprox;
             else {
@@ -636,6 +640,7 @@ bool options_t::parse(int argc, const char** argv) {
         if(strategy != Strategy::DFS &&
            strategy != Strategy::RDFS &&
            strategy != Strategy::HEUR &&
+           strategy != Strategy::POTENCYFS &&
            strategy != Strategy::DEFAULT &&
            strategy != Strategy::OverApprox)
         {

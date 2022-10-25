@@ -163,5 +163,107 @@ namespace PetriEngine {
             return _queue.empty();
         }
 
+        /*********************************************************************/
+        /*                           POTENCY BOIIS                           */
+        /*********************************************************************/
+
+        PotencyQueue::PotencyQueue(size_t nTransitions) : Queue(), _queues(nTransitions)
+        {
+            _potencies.reserve(nTransitions);
+            for (uint32_t i = 0; i < nTransitions; i++)
+            {
+                size_t prev = i == 0 ? SIZE_MAX : i - 1;
+                size_t next = i == nTransitions - 1 ? SIZE_MAX : i + 1;
+                _potencies.push_back(potency_t(100, prev, next));
+            }
+            _best = 0;
+        }
+
+        PotencyQueue::~PotencyQueue() {}
+
+        std::tuple<uint32_t, uint32_t> PotencyQueue::poop()
+        {
+            if (_size == 0)
+                return std::make_tuple(EMPTY, EMPTY);
+
+            size_t t = _best;
+            while (_queues[t].empty())
+            {
+                t = _potencies[t].next;
+            }
+            weighted_t n = _queues[t].top();
+            _queues[t].pop();
+            _size--;
+            return std::make_tuple(n.item, n.weight);
+        }
+
+        void PotencyQueue::push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query)
+        {
+            uint32_t dist = query->distance(*context);
+            _queues[_best].emplace(dist, (uint32_t)id);
+            _size++;
+        }
+
+        void PotencyQueue::push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
+                                uint32_t pDist)
+        {
+            uint32_t dist = query->distance(*context);
+
+            if (dist < pDist)
+            {
+                _potencies[t].value += 1;
+                while (_potencies[t].value > _potencies[_potencies[t].prev].value && _potencies[t].prev != SIZE_MAX)
+                {
+                    size_t prev = _potencies[t].prev;
+                    size_t next = _potencies[t].next;
+                    size_t prevPrev = _potencies[prev].prev;
+
+                    _potencies[prev].next = next;
+                    if (next != SIZE_MAX)
+                        _potencies[next].prev = prev;
+                    _potencies[t].prev = prevPrev;
+                    if (prevPrev != SIZE_MAX)
+                        _potencies[prevPrev].next = t;
+                    _potencies[t].next = prev;
+                    _potencies[prev].prev = t;
+                }
+
+                if (_potencies[t].prev == SIZE_MAX)
+                    _best = t;
+            }
+            else if (dist > pDist)
+            {
+                _potencies[t].value -= 1;
+                while (_potencies[t].value < _potencies[_potencies[t].next].value && _potencies[t].next != SIZE_MAX)
+                {
+                    size_t prev = _potencies[t].prev;
+                    size_t next = _potencies[t].next;
+                    size_t nextNext = _potencies[next].next;
+                    if (prev == SIZE_MAX)
+                        _best = next;
+
+                    _potencies[next].prev = prev;
+                    if (prev != SIZE_MAX)
+                        _potencies[prev].next = next;
+                    _potencies[t].next = nextNext;
+                    if (nextNext != SIZE_MAX)
+                        _potencies[nextNext].prev = t;
+                    _potencies[t].prev = next;
+                    _potencies[next].next = t;
+                }
+            }
+
+            _queues[t].emplace(dist, (uint32_t)id);
+            _size++;
+        }
+
+        bool PotencyQueue::empty() const
+        {
+            return _size == 0;
+        }
+
+        /*********************************************************************/
+        /*                           POTENCY BOIIS                           */
+        /*********************************************************************/
     }
 }
