@@ -19,6 +19,7 @@
 #include "PetriEngine/PQL/Contexts.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <random>
 
 namespace PetriEngine {
@@ -181,6 +182,7 @@ namespace PetriEngine {
 
         PotencyQueue::~PotencyQueue() {}
 
+        size_t PotencyQueue::pop() {}
         std::tuple<uint32_t, uint32_t> PotencyQueue::poop()
         {
             if (_size == 0)
