@@ -233,7 +233,8 @@ namespace PetriEngine {
             }
             else if (dist > pDist)
             {
-                _potencies[t].value -= 1;
+                if (_potencies[t].value != 0)
+                    _potencies[t].value -= 1;
                 while (_potencies[t].value < _potencies[_potencies[t].next].value && _potencies[t].next != SIZE_MAX)
                 {
                     size_t prev = _potencies[t].prev;
