@@ -121,6 +121,12 @@ namespace PetriEngine {
 #define TRYREACH(X)    if(stubbornreduction) TEMPPAR(X, ReducingSuccessorGenerator) \
                        else TEMPPAR(X, SuccessorGenerator)
 
+#define TRYREACHPARPOTENCY      (queries, results, usequeries, printstats, seed)
+#define TEMPPARPOTENCY(X, Y)    if(keep_trace) return tryReachPotency<X, Structures::TracableStateSet, Y>TRYREACHPARPOTENCY ; \
+                                else return tryReachPotency<X, Structures::StateSet, Y> TRYREACHPARPOTENCY;
+#define TRYREACHPOTENCY(X)      if(stubbornreduction) TEMPPARPOTENCY(X, ReducingSuccessorGenerator) \
+                                else TEMPPARPOTENCY(X, SuccessorGenerator)
+
 
         bool ReachabilitySearch::reachable(
                     std::vector<std::shared_ptr<PQL::Condition > >& queries,
@@ -152,7 +158,11 @@ namespace PetriEngine {
                     TRYREACH(RDFSQueue)
                     break;
                 case Strategy::POTENCYFS:
-                    TRYREACH(PotencyQueue)
+                    TRYREACHPOTENCY(PotencyQueue)
+                    break;
+                case Strategy::DISTPOTENCYFS:
+                    TRYREACHPOTENCY(DistPotencyQueue)
+                    break;
                 default:
                     throw base_error("Unsupported search strategy");
             }

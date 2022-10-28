@@ -168,7 +168,7 @@ namespace PetriEngine {
         /*                           POTENCY BOIIS                           */
         /*********************************************************************/
 
-        PotencyQueue::PotencyQueue(size_t nTransitions) : Queue(), _queues(nTransitions)
+        PotencyQueue::PotencyQueue(size_t nTransitions) : _queues(nTransitions)
         {
             _potencies.reserve(nTransitions);
             for (uint32_t i = 0; i < nTransitions; i++)
@@ -182,11 +182,10 @@ namespace PetriEngine {
 
         PotencyQueue::~PotencyQueue() {}
 
-        size_t PotencyQueue::pop() {}
-        std::tuple<uint32_t, uint32_t> PotencyQueue::poop()
+        std::tuple<uint32_t, uint32_t> PotencyQueue::pop()
         {
             if (_size == 0)
-                return std::make_tuple(EMPTY, EMPTY);
+                return std::make_tuple(PetriEngine::PQL::EMPTY, PetriEngine::PQL::EMPTY);
 
             size_t t = _best;
             while (_queues[t].empty())
@@ -206,6 +205,29 @@ namespace PetriEngine {
             _size++;
         }
 
+        void PotencyQueue::_swapAdjacent(size_t a, size_t b)
+        {
+            // x <-> a <-> b <-> y
+            // Assert: _potencies[a].next == b && _potencies[b].prev == a
+
+            // x
+            if (_potencies[a].prev != SIZE_MAX)
+                _potencies[_potencies[a].prev].next = b;
+            
+            // y
+            if (_potencies[b].next != SIZE_MAX)
+                _potencies[_potencies[b].next].prev = a;
+            
+            // a
+            size_t prevTmp = _potencies[a].prev;
+            _potencies[a].prev = b;
+            _potencies[a].next = _potencies[b].next;
+
+            // b 
+            _potencies[b].prev = prevTmp;
+            _potencies[b].next = a;
+        }
+
         void PotencyQueue::push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
                                 uint32_t pDist)
         {
@@ -214,45 +236,23 @@ namespace PetriEngine {
             if (dist < pDist)
             {
                 _potencies[t].value += 1;
-                while (_potencies[t].value > _potencies[_potencies[t].prev].value && _potencies[t].prev != SIZE_MAX)
+                while (_potencies[t].prev != SIZE_MAX && _potencies[t].value > _potencies[_potencies[t].prev].value)
                 {
-                    size_t prev = _potencies[t].prev;
-                    size_t next = _potencies[t].next;
-                    size_t prevPrev = _potencies[prev].prev;
-
-                    _potencies[prev].next = next;
-                    if (next != SIZE_MAX)
-                        _potencies[next].prev = prev;
-                    _potencies[t].prev = prevPrev;
-                    if (prevPrev != SIZE_MAX)
-                        _potencies[prevPrev].next = t;
-                    _potencies[t].next = prev;
-                    _potencies[prev].prev = t;
+                    _swapAdjacent(_potencies[t].prev, t);
                 }
 
                 if (_potencies[t].prev == SIZE_MAX)
                     _best = t;
             }
-            else if (dist > pDist)
+            else if (dist > pDist && _potencies[t].value != 0)
             {
-                if (_potencies[t].value != 0)
-                    _potencies[t].value -= 1;
-                while (_potencies[t].value < _potencies[_potencies[t].next].value && _potencies[t].next != SIZE_MAX)
+                _potencies[t].value -= 1;
+                while (_potencies[t].next != SIZE_MAX && _potencies[t].value < _potencies[_potencies[t].next].value)
                 {
-                    size_t prev = _potencies[t].prev;
-                    size_t next = _potencies[t].next;
-                    size_t nextNext = _potencies[next].next;
-                    if (prev == SIZE_MAX)
-                        _best = next;
+                    if (_best == t)
+                        _best = _potencies[t].next;
 
-                    _potencies[next].prev = prev;
-                    if (prev != SIZE_MAX)
-                        _potencies[prev].next = next;
-                    _potencies[t].next = nextNext;
-                    if (nextNext != SIZE_MAX)
-                        _potencies[nextNext].prev = t;
-                    _potencies[t].prev = next;
-                    _potencies[next].next = t;
+                    _swapAdjacent(t, _potencies[t].next);
                 }
             }
 
@@ -263,6 +263,41 @@ namespace PetriEngine {
         bool PotencyQueue::empty() const
         {
             return _size == 0;
+        }
+
+        void DistPotencyQueue::push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
+                                uint32_t pDist)
+        {
+            uint32_t dist = query->distance(*context);
+
+            if (dist < pDist)
+            {
+                _potencies[t].value += pDist - dist;
+                while (_potencies[t].prev != SIZE_MAX && _potencies[t].value > _potencies[_potencies[t].prev].value)
+                {
+                    _swapAdjacent(_potencies[t].prev, t);
+                }
+
+                if (_potencies[t].prev == SIZE_MAX)
+                    _best = t;
+            }
+            else if (dist > pDist && _potencies[t].value != 0)
+            {
+                if (_potencies[t].value >= dist - pDist)
+                    _potencies[t].value -= dist - pDist;
+                else
+                    _potencies[t].value = 0;
+                while (_potencies[t].next != SIZE_MAX && _potencies[t].value < _potencies[_potencies[t].next].value)
+                {
+                    if (_best == t)
+                        _best = _potencies[t].next;
+
+                    _swapAdjacent(t, _potencies[t].next);
+                }
+            }
+
+            _queues[t].emplace(dist, (uint32_t)id);
+            _size++;
         }
 
         /*********************************************************************/

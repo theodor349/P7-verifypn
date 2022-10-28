@@ -105,7 +105,7 @@ namespace PetriEngine {
         /*                           POTENCY BOIIS                           */
         /*********************************************************************/
 
-        class PotencyQueue : public Queue
+        class PotencyQueue
         {
         public:
             struct weighted_t
@@ -130,21 +130,32 @@ namespace PetriEngine {
             };
 
             PotencyQueue(size_t nTransitions);
-            ~PotencyQueue() override;
+            ~PotencyQueue();
 
-            size_t pop() override;
-            std::tuple<uint32_t, uint32_t> poop();
-            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query) override;
+            std::tuple<uint32_t, uint32_t> pop();
+            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query);
             void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
-                              uint32_t pDist);
-                
-            bool empty() const override;
+                      uint32_t pDist);
+                            
+            bool empty() const;
 
-        private:
+        protected:
             size_t _size = 0;
             size_t _best;
             std::vector<potency_t> _potencies;
             std::vector<std::priority_queue<weighted_t>> _queues;
+
+            void _swapAdjacent(size_t a, size_t b);
+        };
+
+        class DistPotencyQueue : public PotencyQueue
+        {
+        public:
+            DistPotencyQueue(size_t nTransitions) : PotencyQueue(nTransitions) {};
+
+            using PotencyQueue::push;
+            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
+                      uint32_t pDist);
         };
 
         /*********************************************************************/

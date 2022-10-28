@@ -78,10 +78,10 @@ namespace PetriEngine {
                 bool usequeries,
                 bool printstats,
                 size_t seed);
-            template<typename W = Structures::StateSet, typename G>
-            bool potencyTryReach(
-                std::vector<std::shared_ptr<PQL::Condition > >& queries,
-                std::vector<ResultPrinter::Result>& results,
+            template<typename Q, typename W = Structures::StateSet, typename G>
+            bool tryReachPotency(
+                std::vector<std::shared_ptr<PQL::Condition>> &queries,
+                std::vector<ResultPrinter::Result> &results,
                 bool usequeries,
                 bool printstats,
                 size_t seed);
@@ -114,8 +114,6 @@ namespace PetriEngine {
                                         std::vector<ResultPrinter::Result>& results, bool usequeries,
                                         bool printstats, size_t seed)
         {
-            if (std::is_same<Q, PetriEngine::Structures::PotencyQueue>::value)
-                return potencyTryReach<W, G>(queries, results, usequeries, printstats, seed);
 
             // set up state
             searchstate_t ss;
@@ -198,8 +196,8 @@ namespace PetriEngine {
         /*                           POTENCY BOIIS                           */
         /*********************************************************************/
 
-        template<typename W, typename G>
-        bool ReachabilitySearch::potencyTryReach(std::vector<std::shared_ptr<PQL::Condition>> &queries,
+        template<typename Q, typename W = Structures::StateSet, typename G>
+        bool ReachabilitySearch::tryReachPotency(std::vector<std::shared_ptr<PQL::Condition>> &queries,
                                                  std::vector<ResultPrinter::Result> &results, bool usequeries,
                                                  bool printstats, size_t seed)
         {
@@ -217,7 +215,7 @@ namespace PetriEngine {
             working.setMarking(_net.makeInitialMarking());
 
             W states(_net, _kbound);
-            PetriEngine::Structures::PotencyQueue queue(_net.numberOfTransitions());
+            Q queue(_net.numberOfTransitions());
             G generator = _makeSucGen<G>(_net, queries);
             auto r = states.add(state);
             if (r.first)
@@ -237,7 +235,7 @@ namespace PetriEngine {
                     queue.push(r.second, &dc, queries[ss.heurquery].get());
                 }
 
-                for (auto [nid, pDist] = queue.poop(); nid != Structures::Queue::EMPTY; std::tie(nid, pDist) = queue.poop())
+                for (auto [nid, pDist] = queue.pop(); nid != Structures::Queue::EMPTY; std::tie(nid, pDist) = queue.pop())
                 {
                     states.decode(state, nid);
                     generator.prepare(&state);
