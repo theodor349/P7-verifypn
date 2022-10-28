@@ -33,10 +33,12 @@ void options_t::print(std::ostream& optionsOut) {
         optionsOut << "\nSearch=HEUR";
     } else if (strategy == Strategy::RDFS) {
         optionsOut << "\nSearch=RDFS";
-    } else if (strategy == Strategy::POTENCYFS) {
-        optionsOut << "\nSearch=POTENCYFS";
+    } else if (strategy == Strategy::INCRPOTENCYFS) {
+        optionsOut << "\nSearch=INCRPOTENCYFS";
     } else if (strategy == Strategy::DISTPOTENCYFS) {
         optionsOut << "\nSearch=DISTPOTENCYFS";
+    } else if (strategy == Strategy::RANDOMPOTENCYFS) {
+        optionsOut << "\nSearch=RANDOMPOTENCYFS";
     }
     else {
         optionsOut << "\nSearch=OverApprox";
@@ -266,10 +268,12 @@ bool options_t::parse(int argc, const char** argv) {
                 strategy = Strategy::DFS;
             else if (std::strcmp(s, "RDFS") == 0)
                 strategy = Strategy::RDFS;
-            else if (std::strcmp(s, "POTENCYFS") == 0)
-                strategy = Strategy::POTENCYFS;
+            else if (std::strcmp(s, "INCRPOTENCYFS") == 0)
+                strategy = Strategy::INCRPOTENCYFS;
             else if (std::strcmp(s, "DISTPOTENCYFS") == 0)
                 strategy = Strategy::DISTPOTENCYFS;
+            else if (std::strcmp(s, "RANDOMPOTENCYFS") == 0)
+                strategy = Strategy::RANDOMPOTENCYFS;
             else if (std::strcmp(s, "OverApprox") == 0)
                 strategy = Strategy::OverApprox;
             else {
@@ -645,8 +649,9 @@ bool options_t::parse(int argc, const char** argv) {
         if(strategy != Strategy::DFS &&
            strategy != Strategy::RDFS &&
            strategy != Strategy::HEUR &&
-           strategy != Strategy::POTENCYFS &&
+           strategy != Strategy::INCRPOTENCYFS &&
            strategy != Strategy::DISTPOTENCYFS &&
+           strategy != Strategy::RANDOMPOTENCYFS &&
            strategy != Strategy::DEFAULT &&
            strategy != Strategy::OverApprox)
         {

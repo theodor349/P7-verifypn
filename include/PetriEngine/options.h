@@ -17,8 +17,9 @@ enum class Strategy {
     DFS,
     HEUR,
     RDFS,
-    POTENCYFS,
+    INCRPOTENCYFS,
     DISTPOTENCYFS,
+    RANDOMPOTENCYFS,
     OverApprox,
     DEFAULT
 };

@@ -157,11 +157,14 @@ namespace PetriEngine {
                 case Strategy::RDFS:
                     TRYREACH(RDFSQueue)
                     break;
-                case Strategy::POTENCYFS:
-                    TRYREACHPOTENCY(PotencyQueue)
+                case Strategy::INCRPOTENCYFS:
+                    TRYREACHPOTENCY(IncrPotencyQueue)
                     break;
                 case Strategy::DISTPOTENCYFS:
                     TRYREACHPOTENCY(DistPotencyQueue)
+                    break;
+                case Strategy::RANDOMPOTENCYFS:
+                    TRYREACHPOTENCY(RandomPotencyQueue)
                     break;
                 default:
                     throw base_error("Unsupported search strategy");

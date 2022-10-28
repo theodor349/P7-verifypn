@@ -196,7 +196,7 @@ namespace PetriEngine {
         /*                           POTENCY BOIIS                           */
         /*********************************************************************/
 
-        template<typename Q, typename W = Structures::StateSet, typename G>
+        template<typename Q, typename W, typename G>
         bool ReachabilitySearch::tryReachPotency(std::vector<std::shared_ptr<PQL::Condition>> &queries,
                                                  std::vector<ResultPrinter::Result> &results, bool usequeries,
                                                  bool printstats, size_t seed)
@@ -215,7 +215,7 @@ namespace PetriEngine {
             working.setMarking(_net.makeInitialMarking());
 
             W states(_net, _kbound);
-            Q queue(_net.numberOfTransitions());
+            Q queue(_net.numberOfTransitions(), seed);
             G generator = _makeSucGen<G>(_net, queries);
             auto r = states.add(state);
             if (r.first)

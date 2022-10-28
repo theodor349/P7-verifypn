@@ -129,16 +129,15 @@ namespace PetriEngine {
                 potency_t(uint32_t v, size_t p, size_t n) : value(v), prev(p), next(n){};
             };
 
-            PotencyQueue(size_t nTransitions);
-            ~PotencyQueue();
+            PotencyQueue(size_t nTransitions, size_t s = 0);
+            virtual ~PotencyQueue();
 
             std::tuple<uint32_t, uint32_t> pop();
-            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query);
-            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
-                      uint32_t pDist);
-                            
             bool empty() const;
+            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query);
 
+            virtual void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
+                      uint32_t pDist) = 0;      
         protected:
             size_t _size = 0;
             size_t _best;
@@ -147,15 +146,42 @@ namespace PetriEngine {
 
             void _swapAdjacent(size_t a, size_t b);
         };
+        
+        class IncrPotencyQueue : public PotencyQueue
+        {
+        public:
+        
+            IncrPotencyQueue(size_t nTransitions, size_t);
+            virtual ~IncrPotencyQueue();
+
+            using PotencyQueue::push;
+            virtual void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
+                      uint32_t pDist) override;
+        };
 
         class DistPotencyQueue : public PotencyQueue
         {
         public:
-            DistPotencyQueue(size_t nTransitions) : PotencyQueue(nTransitions) {};
+            DistPotencyQueue(size_t nTransitions, size_t);
+            virtual ~DistPotencyQueue();
 
             using PotencyQueue::push;
-            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
-                      uint32_t pDist);
+            virtual void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
+                      uint32_t pDist) override;
+        };
+
+        class RandomPotencyQueue : public PotencyQueue
+        {
+        public:
+            RandomPotencyQueue(size_t nTransitions, size_t seed);
+            virtual ~RandomPotencyQueue();
+
+            using PotencyQueue::push;
+            virtual void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
+                      uint32_t pDist) override;
+            std::tuple<uint32_t, uint32_t> pop();
+        private:
+            size_t _seed;
         };
 
         /*********************************************************************/
