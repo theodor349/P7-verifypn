@@ -1,0 +1,80 @@
+Property ASLink-PT-02b-LTLFireability-00
+  "Automatically generated"
+  is:
+    A X F (!"t390"? & ("t1296"? | ("t1025"? & !"t350"?)))
+  end.
+Property ASLink-PT-02b-LTLFireability-01
+  "Automatically generated"
+  is:
+    A X (F !G "t1268"? U (X F "t885"? U "t294"?))
+  end.
+Property ASLink-PT-02b-LTLFireability-02
+  "Automatically generated"
+  is:
+    A F G X (X "t74"? & F X ("t434"? & "t1009"? & F "t1009"?))
+  end.
+Property ASLink-PT-02b-LTLFireability-03
+  "Automatically generated"
+  is:
+    A (F X F G "t829"? U !("t605"? | !"t455"? | F X "t605"?))
+  end.
+Property ASLink-PT-02b-LTLFireability-04
+  "Automatically generated"
+  is:
+    A F G X X (F G !F "t1063"? U "t816"?)
+  end.
+Property ASLink-PT-02b-LTLFireability-05
+  "Automatically generated"
+  is:
+    A (X !F (("t1138"? & G "t1132"?) | ("t1138"? & F "t1138"?)) U "t219"?)
+  end.
+Property ASLink-PT-02b-LTLFireability-06
+  "Automatically generated"
+  is:
+    A (F X ("t456"? & F G "t456"?) | !(!"t696"? | G F "t853"?))
+  end.
+Property ASLink-PT-02b-LTLFireability-07
+  "Automatically generated"
+  is:
+    A ((F "t892"? & X ("t130"? & G "t1590"?)) | (!"t802"? U G X "t802"?))
+  end.
+Property ASLink-PT-02b-LTLFireability-08
+  "Automatically generated"
+  is:
+    A !(X "t904"? U (!"t527"? | F ("t1463"? & !("t527"? U !"t527"?))))
+  end.
+Property ASLink-PT-02b-LTLFireability-09
+  "Automatically generated"
+  is:
+    A !(!X X G !F !"t826"? & G F "t1410"?)
+  end.
+Property ASLink-PT-02b-LTLFireability-10
+  "Automatically generated"
+  is:
+    A (X ("t609"? & X ("t48"? & "t609"?)) & G "t1046"?)
+  end.
+Property ASLink-PT-02b-LTLFireability-11
+  "Automatically generated"
+  is:
+    A X !("t922"? U "t310"?)
+  end.
+Property ASLink-PT-02b-LTLFireability-12
+  "Automatically generated"
+  is:
+    A X G X X X G (X "t426"? | !("t1200"? U "t426"?))
+  end.
+Property ASLink-PT-02b-LTLFireability-13
+  "Automatically generated"
+  is:
+    A G ((G X "t152"? U "t152"?) & (G (!"t273"? U "t152"?) U "t273"?))
+  end.
+Property ASLink-PT-02b-LTLFireability-14
+  "Automatically generated"
+  is:
+    A X ((G "t241"? U "t722"?) U ("t1461"? | "t722"?))
+  end.
+Property ASLink-PT-02b-LTLFireability-15
+  "Automatically generated"
+  is:
+    A (F X (G F "t1326"? U X G "t1556"?) | F "t1556"?)
+  end.

@@ -1,0 +1,80 @@
+Property ASLink-PT-02b-UpperBounds-00
+  "Automatically generated"
+  is:
+    bound("p546")
+  end.
+Property ASLink-PT-02b-UpperBounds-01
+  "Automatically generated"
+  is:
+    bound("p939")
+  end.
+Property ASLink-PT-02b-UpperBounds-02
+  "Automatically generated"
+  is:
+    bound("p1199")
+  end.
+Property ASLink-PT-02b-UpperBounds-03
+  "Automatically generated"
+  is:
+    bound("p1095")
+  end.
+Property ASLink-PT-02b-UpperBounds-04
+  "Automatically generated"
+  is:
+    bound("p1126")
+  end.
+Property ASLink-PT-02b-UpperBounds-05
+  "Automatically generated"
+  is:
+    bound("p1213")
+  end.
+Property ASLink-PT-02b-UpperBounds-06
+  "Automatically generated"
+  is:
+    bound("p943")
+  end.
+Property ASLink-PT-02b-UpperBounds-07
+  "Automatically generated"
+  is:
+    bound("p242")
+  end.
+Property ASLink-PT-02b-UpperBounds-08
+  "Automatically generated"
+  is:
+    bound("p962")
+  end.
+Property ASLink-PT-02b-UpperBounds-09
+  "Automatically generated"
+  is:
+    bound("p696")
+  end.
+Property ASLink-PT-02b-UpperBounds-10
+  "Automatically generated"
+  is:
+    bound("p837")
+  end.
+Property ASLink-PT-02b-UpperBounds-11
+  "Automatically generated"
+  is:
+    bound("p804")
+  end.
+Property ASLink-PT-02b-UpperBounds-12
+  "Automatically generated"
+  is:
+    bound("p390")
+  end.
+Property ASLink-PT-02b-UpperBounds-13
+  "Automatically generated"
+  is:
+    bound("p1195")
+  end.
+Property ASLink-PT-02b-UpperBounds-14
+  "Automatically generated"
+  is:
+    bound("p1241")
+  end.
+Property ASLink-PT-02b-UpperBounds-15
+  "Automatically generated"
+  is:
+    bound("p575")
+  end.

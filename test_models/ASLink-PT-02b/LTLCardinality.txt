@@ -1,0 +1,80 @@
+Property ASLink-PT-02b-LTLCardinality-00
+  "Automatically generated"
+  is:
+    A G !X G X (X X ((1) <= (#tokens("p988"))) & (G ((1) <= (#tokens("p536"))) U !G ((#tokens("p762")) <= (#tokens("p1006")))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-01
+  "Automatically generated"
+  is:
+    A (((2) <= (#tokens("p613"))) & G ((#tokens("p520")) <= (#tokens("p650"))) & F X X ((3) <= (#tokens("p977"))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-02
+  "Automatically generated"
+  is:
+    A (((#tokens("p1075")) <= (#tokens("p615"))) | F X G X ((#tokens("p1075")) <= (#tokens("p615"))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-03
+  "Automatically generated"
+  is:
+    A G !(((#tokens("p675")) <= (#tokens("p143"))) & X ((1) <= (#tokens("p901"))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-04
+  "Automatically generated"
+  is:
+    A !G F (G ((#tokens("p1160")) <= (#tokens("p826"))) U ((#tokens("p185")) <= (#tokens("p1025"))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-05
+  "Automatically generated"
+  is:
+    A ((((3) <= (#tokens("p967"))) & F ((2) <= (#tokens("p299")))) U !((F ((0) <= (#tokens("p553"))) U !((0) <= (#tokens("p553")))) U ((3) <= (#tokens("p967")))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-06
+  "Automatically generated"
+  is:
+    A !(G ((2) <= (#tokens("p1153"))) & ((F ((#tokens("p1128")) <= (#tokens("p419"))) U F ((#tokens("p195")) <= (#tokens("p834")))) | !(((#tokens("p767")) <= (#tokens("p635"))) U !((#tokens("p195")) <= (#tokens("p834"))))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-07
+  "Automatically generated"
+  is:
+    A !(F (((#tokens("p848")) <= (#tokens("p1237"))) U ((#tokens("p1229")) <= (#tokens("p702")))) U X !(((#tokens("p819")) <= (#tokens("p953"))) & !((#tokens("p1229")) <= (#tokens("p702")))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-08
+  "Automatically generated"
+  is:
+    A F G F G (!((#tokens("p1067")) <= (#tokens("p753"))) U G F ((#tokens("p1160")) <= (#tokens("p546"))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-09
+  "Automatically generated"
+  is:
+    A G !X !(X ((0) <= (#tokens("p732"))) & X (((1) <= (#tokens("p1224"))) U X X (((0) <= (#tokens("p953"))) U ((#tokens("p673")) <= (#tokens("p188"))))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-10
+  "Automatically generated"
+  is:
+    A (!((0) <= (#tokens("p53"))) & G ((#tokens("p282")) <= (#tokens("p1206"))) & (!((#tokens("p282")) <= (#tokens("p1206"))) U G X ((0) <= (#tokens("p53")))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-11
+  "Automatically generated"
+  is:
+    A (F X X (F ((#tokens("p454")) <= (#tokens("p663"))) U ((1) <= (#tokens("p798")))) | X X F (((2) <= (#tokens("p25"))) U X ((1) <= (#tokens("p958")))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-12
+  "Automatically generated"
+  is:
+    A F !F X F !(((#tokens("p886")) <= (#tokens("p449"))) & F ((#tokens("p1087")) <= (#tokens("p1049"))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-13
+  "Automatically generated"
+  is:
+    A X F (G !((2) <= (#tokens("p298"))) & F !G (!((1) <= (#tokens("p988"))) | ((2) <= (#tokens("p298")))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-14
+  "Automatically generated"
+  is:
+    A (F X ((#tokens("p994")) <= (#tokens("p215"))) | F X ((1) <= (#tokens("p1026"))) | X (X ((1) <= (#tokens("p394"))) | G ((#tokens("p994")) <= (#tokens("p215")))))
+  end.
+Property ASLink-PT-02b-LTLCardinality-15
+  "Automatically generated"
+  is:
+    A ((X ((#tokens("p1234")) <= (#tokens("p651"))) U (!((#tokens("p516")) <= (#tokens("p965"))) | !X ((#tokens("p516")) <= (#tokens("p965"))))) U ((#tokens("p1234")) <= (#tokens("p651"))))
+  end.

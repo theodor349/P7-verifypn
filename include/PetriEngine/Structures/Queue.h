@@ -111,8 +111,8 @@ namespace PetriEngine {
             struct weighted_t
             {
                 uint32_t weight;
-                uint32_t item;
-                weighted_t(uint32_t w, uint32_t i) : weight(w), item(i){};
+                size_t item;
+                weighted_t(uint32_t w, size_t i) : weight(w), item(i){};
                 bool operator<(const weighted_t &y) const
                 {
                     if (weight == y.weight)
@@ -132,7 +132,7 @@ namespace PetriEngine {
             PotencyQueue(size_t nTransitions, size_t s = 0);
             virtual ~PotencyQueue();
 
-            std::tuple<uint32_t, uint32_t> pop();
+            std::tuple<size_t, uint32_t> pop();
             bool empty() const;
             void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query);
 

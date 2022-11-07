@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<property-set xmlns="http://mcc.lip6.fr/">
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-00</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p546</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-01</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p939</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-02</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p1199</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-03</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p1095</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-04</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p1126</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-05</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p1213</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-06</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p943</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-07</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p242</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-08</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p962</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-09</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p696</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-10</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p837</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-11</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p804</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-12</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p390</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-13</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p1195</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-14</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p1241</place>
+      </place-bound>
+    </formula>
+  </property>
+  <property>
+    <id>ASLink-PT-02b-UpperBounds-15</id>
+    <description>Automatically generated</description>
+    <formula>
+      <place-bound>
+        <place>p575</place>
+      </place-bound>
+    </formula>
+  </property>
+</property-set>

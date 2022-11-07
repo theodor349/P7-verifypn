@@ -182,7 +182,7 @@ namespace PetriEngine {
 
         PotencyQueue::~PotencyQueue() {}
 
-        std::tuple<uint32_t, uint32_t> PotencyQueue::pop()
+        std::tuple<size_t, uint32_t> PotencyQueue::pop()
         {
             if (_size == 0)
                 return std::make_tuple(PetriEngine::PQL::EMPTY, PetriEngine::PQL::EMPTY);
@@ -346,7 +346,7 @@ namespace PetriEngine {
             _size++;
         }
 
-        std::tuple<uint32_t, uint32_t> RandomPotencyQueue::pop()
+        std::tuple<size_t, uint32_t> RandomPotencyQueue::pop()
         {
             if (_size == 0)
                 return std::make_tuple(PetriEngine::PQL::EMPTY, PetriEngine::PQL::EMPTY);
