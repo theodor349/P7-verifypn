@@ -179,7 +179,7 @@ namespace PetriEngine {
             using PotencyQueue::push;
             virtual void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
                       uint32_t pDist) override;
-            std::tuple<uint32_t, uint32_t> pop();
+            std::tuple<size_t, uint32_t> pop();
         private:
             size_t _seed;
         };
