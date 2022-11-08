@@ -143,7 +143,7 @@ namespace PetriEngine {
                 {
                     if(checkQueries(queries, results, working, ss, &states))
                     {
-                        if(printstats) printStats(ss, &states);
+                        printStats(ss, &states);
                             return true;
                     }
                 }
@@ -170,7 +170,7 @@ namespace PetriEngine {
                             _satisfyingMarking = res.second;
                             ss.exploredStates++;
                             if (checkQueries(queries, results, working, ss, &states)) {
-                                if(printstats) printStats(ss, &states);
+                                printStats(ss, &states);
                                 return true;
                             }
                         }
@@ -188,7 +188,7 @@ namespace PetriEngine {
                 }
             }
 
-            if(printstats) printStats(ss, &states);
+            printStats(ss, &states);
             return false;
         }
 
@@ -225,8 +225,7 @@ namespace PetriEngine {
                 {
                     if (checkQueries(queries, results, working, ss, &states))
                     {
-                        if (printstats)
-                            printStats(ss, &states);
+                        printStats(ss, &states);
                         return true;
                     }
                 }
@@ -255,8 +254,7 @@ namespace PetriEngine {
                             ss.exploredStates++;
                             if (checkQueries(queries, results, working, ss, &states))
                             {
-                                if (printstats)
-                                    printStats(ss, &states);
+                                printStats(ss, &states);
                                 return true;
                             }
                         }
@@ -273,8 +271,7 @@ namespace PetriEngine {
                 }
             }
 
-            if (printstats)
-                printStats(ss, &states);
+	    printStats(ss, &states);
             return false;
         }
 
