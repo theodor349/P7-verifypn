@@ -272,7 +272,7 @@ bool options_t::parse(int argc, const char** argv) {
                 strategy = Strategy::INCRPOTENCYFS;
             else if (std::strcmp(s, "DISTPOTENCYFS") == 0)
                 strategy = Strategy::DISTPOTENCYFS;
-            else if (std::strcmp(s, "RANDOMPOTENCYFS") == 0)
+            else if (std::strcmp(s, "RPFS") == 0)
                 strategy = Strategy::RANDOMPOTENCYFS;
             else if (std::strcmp(s, "OverApprox") == 0)
                 strategy = Strategy::OverApprox;
