@@ -662,6 +662,6 @@ bool options_t::parse(int argc, const char** argv) {
     if (false && replay_trace && logic != TemporalLogic::LTL) {
         throw base_error("Argument Error: Trace replay_trace is only supported for LTL model checking.");
     }
-    seed_offset = (time(nullptr) xor seed_offset);
+    // seed_offset = (time(nullptr) xor seed_offset);
     return false;
 }
