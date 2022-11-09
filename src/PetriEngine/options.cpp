@@ -268,9 +268,9 @@ bool options_t::parse(int argc, const char** argv) {
                 strategy = Strategy::DFS;
             else if (std::strcmp(s, "RDFS") == 0)
                 strategy = Strategy::RDFS;
-            else if (std::strcmp(s, "INCRPOTENCYFS") == 0)
+            else if (std::strcmp(s, "IPFS") == 0)
                 strategy = Strategy::INCRPOTENCYFS;
-            else if (std::strcmp(s, "DISTPOTENCYFS") == 0)
+            else if (std::strcmp(s, "DPFS") == 0)
                 strategy = Strategy::DISTPOTENCYFS;
             else if (std::strcmp(s, "RPFS") == 0)
                 strategy = Strategy::RANDOMPOTENCYFS;
