@@ -69,6 +69,8 @@ namespace PetriEngine {
                 std::vector<size_t> enabledTransitionsCount;
                 size_t heurquery = 0;
                 bool usequeries;
+		clock_t startTime;
+		clock_t endTime;
             };
 
             template<typename Q, typename W = Structures::StateSet, typename G>
@@ -154,6 +156,7 @@ namespace PetriEngine {
                 }
 
                 // Search!
+		ss.startTime = clock();
                 for(auto nid = queue.pop(); nid != Structures::Queue::EMPTY; nid = queue.pop()) {
                     states.decode(state, nid);
                     generator.prepare(&state);
@@ -170,6 +173,7 @@ namespace PetriEngine {
                             _satisfyingMarking = res.second;
                             ss.exploredStates++;
                             if (checkQueries(queries, results, working, ss, &states)) {
+				ss.endTime = clock();
                                 printStats(ss, &states);
                                 return true;
                             }
@@ -233,7 +237,7 @@ namespace PetriEngine {
                     PQL::DistanceContext dc(&_net, working.marking());
                     queue.push(r.second, &dc, queries[ss.heurquery].get());
                 }
-
+		ss.startTime = clock();
                 for (auto [nid, pDist] = queue.pop(); nid != Structures::Queue::EMPTY; std::tie(nid, pDist) = queue.pop())
                 {
                     states.decode(state, nid);
@@ -254,6 +258,7 @@ namespace PetriEngine {
                             ss.exploredStates++;
                             if (checkQueries(queries, results, working, ss, &states))
                             {
+				ss.endTime = clock();
                                 printStats(ss, &states);
                                 return true;
                             }
