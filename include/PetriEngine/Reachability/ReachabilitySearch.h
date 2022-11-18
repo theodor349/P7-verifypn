@@ -138,6 +138,7 @@ namespace PetriEngine {
             auto r = states.add(state);
             // this can fail due to reductions; we push tokens around and violate K
             if(r.first){
+		ss.startTime = clock();
                 // add initial to states, check queries on initial state
                 _satisfyingMarking = r.second;
                 // check initial marking
@@ -156,7 +157,6 @@ namespace PetriEngine {
                 }
 
                 // Search!
-		ss.startTime = clock();
                 for(auto nid = queue.pop(); nid != Structures::Queue::EMPTY; nid = queue.pop()) {
                     states.decode(state, nid);
                     generator.prepare(&state);
@@ -192,6 +192,7 @@ namespace PetriEngine {
                 }
             }
 
+	    ss.endTime = clock();
             printStats(ss, &states);
             return false;
         }
@@ -224,6 +225,7 @@ namespace PetriEngine {
             auto r = states.add(state);
             if (r.first)
             {
+		ss.startTime = clock();
                 _satisfyingMarking = r.second;
                 if (ss.usequeries)
                 {
@@ -237,7 +239,6 @@ namespace PetriEngine {
                     PQL::DistanceContext dc(&_net, working.marking());
                     queue.push(r.second, &dc, queries[ss.heurquery].get());
                 }
-		ss.startTime = clock();
                 for (auto [nid, pDist] = queue.pop(); nid != Structures::Queue::EMPTY; std::tie(nid, pDist) = queue.pop())
                 {
                     states.decode(state, nid);
@@ -276,6 +277,7 @@ namespace PetriEngine {
                 }
             }
 
+	    ss.endTime = clock();
 	    printStats(ss, &states);
             return false;
         }
