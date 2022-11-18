@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   Vector.cpp
  * Author: Peter G. Jensen
  *
@@ -14,27 +14,29 @@
 #include "PetriEngine/Simplification/Vector.h"
 #include "PetriEngine/Simplification/LPCache.h"
 
-namespace PetriEngine {
-    namespace Simplification {
-        
+namespace PetriEngine
+{
+    namespace Simplification
+    {
+
         void Vector::free()
         {
             --ref;
-            if(ref == 0)
+            if (ref == 0)
             {
                 factory->invalidate(*this);
             }
         }
-        
+
         void Vector::inc()
         {
             ++ref;
         }
 
-        size_t Vector::data_size() const 
+        size_t Vector::data_size() const
         {
-            return _data.size() * sizeof(std::pair<int,int>);
+            return _data.size() * sizeof(std::pair<int, int>);
         }
-        
+
     }
 }

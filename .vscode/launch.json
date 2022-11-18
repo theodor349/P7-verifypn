@@ -1,0 +1,31 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "lldb Launch",
+            "program": "${workspaceRoot}/build/verifypn/bin/verifypn-osx64",
+            "args": [
+                // "--reduction", "0",
+                // "--query-reduction", "0",
+                // "--disable-partial-order",
+                // "--lpsolve-timeout", "0",
+                "--xml-queries",
+                "1",
+                "--search-strategy",
+                "RPFS",
+                // "--search-strategy", "DFS",
+                // "--search-strategy", "DISTPOTENCYFS",
+                // "--search-strategy", "RANDOMPOTENCYFS", "--seed-offset", "7098042"
+                // "--search-strategy", "RANDOMPOTENCYFS", "--seed-offset", "733406",
+                "${workspaceRoot}/test_models/aa-test/model.pnml",
+                "${workspaceRoot}/test_models/aa-test/query.xml"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
