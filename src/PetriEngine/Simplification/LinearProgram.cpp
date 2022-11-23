@@ -187,13 +187,14 @@ namespace PetriEngine
                 for (size_t i = 1; i <= nCol; i++)
                 {
                     double col_prim = glp_mip_col_val(lp, i); // Get the value of the i'th column in the optimal solution
+
                     if (col_prim > 0)
                     {
                         vect.push_back(col_prim);
                     }
                     auto x = 0.0;
                 }
-                auto x1 = vect.size();
+                auto numberOfFiring = vect.size();
                 auto s = 0.0;
             }
 

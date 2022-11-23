@@ -22,23 +22,27 @@
 
 #include "Visitor.h"
 
-namespace PetriEngine::PQL {
+namespace PetriEngine::PQL
+{
 
-    Retval simplify(std::shared_ptr<Condition> element, SimplificationContext& context);
+    Retval simplify(std::shared_ptr<Condition> element, SimplificationContext &context);
 
-    class Simplifier : public Visitor {
+    class Simplifier : public Visitor
+    {
 
     public:
-        explicit Simplifier(SimplificationContext& context) :
-                _context(context) {}
+        explicit Simplifier(SimplificationContext &context) : _context(context)
+        {
+            int i = 3;
+        }
 
         Retval get_return_value() { return std::move(_return_value); }
 
     protected:
-        SimplificationContext& _context;
+        SimplificationContext &_context;
         Retval _return_value;
 
-        Retval simplify_or(const LogicalCondition* element);
+        Retval simplify_or(const LogicalCondition *element);
         Retval simplify_and(const LogicalCondition *element);
 
         Retval simplify_AG(Retval &r);
@@ -107,14 +111,15 @@ namespace PetriEngine::PQL {
 
     Member constraint(const Expr *element, const SimplificationContext &context);
 
-    class ConstraintVisitor : public ExpressionVisitor {
+    class ConstraintVisitor : public ExpressionVisitor
+    {
     public:
         explicit ConstraintVisitor(const SimplificationContext &context) : _context(context) {}
 
         Member get_return_value() { return _return_value; }
 
     private:
-        const SimplificationContext& _context;
+        const SimplificationContext &_context;
         Member _return_value;
 
         void _accept(const LiteralExpr *element) override;
@@ -134,4 +139,4 @@ namespace PetriEngine::PQL {
         void _accept(const IdentifierExpr *element) override;
     };
 }
-#endif //VERIFYPN_SIMPLIFIER_H
+#endif // VERIFYPN_SIMPLIFIER_H

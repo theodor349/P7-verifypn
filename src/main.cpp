@@ -54,6 +54,27 @@ using namespace PetriEngine;
 using namespace PetriEngine::PQL;
 using namespace PetriEngine::Reachability;
 
+// ******************************************************************************* //
+// ******************* * * * INTEGER LINEAR PROGRAMMING * * * ******************** //
+// ******************************************************************************* //
+
+uint32_t getConstant(PetriNet *net, MarkVal *marking, Condition_ptr condition, options_t &options)
+{
+    // Step 1: Create the simplification context
+    // -----------------------------------------
+    std::atomic<uint32_t> to_handle(1);
+
+    std::LPCache cache;
+    SimplificationContext simplificationContext(marking, net, 42946,
+                                                42946, &cache);
+    // Step 2: Visit the condtion
+    // ------------------------
+    Simplifier simp = Simplifier(simplificationContext);
+    Visitor::visit(simp, condition);
+
+    return 0;
+}
+
 int main(int argc, const char **argv)
 {
     shared_string_set string_set; //<-- used for de-duplicating names of places/transitions
@@ -351,10 +372,7 @@ int main(int argc, const char **argv)
         printStats(builder, options);
 
         auto net = std::unique_ptr<PetriNet>(builder.makePetriNet());
-
-        // bool isImpossible(PetriNet *net, equation_t equation, MarkVal *marking, uint32_t solvetime)
-        // isImpossible(&net, queries[0], net->_initialMarking());
-
+        getConstant(net.get(), net->makeInitialMarking(), queries[0], options);
         if (options.model_out_file.size() > 0)
         {
             std::fstream file;
@@ -614,198 +632,4 @@ int main(int argc, const char **argv)
     }
 
     return to_underlying(ReturnValue::SuccessCode);
-}
-
-glp_prob *buildBase(PetriNet *net, MarkVal *marking)
-{
-    constexpr auto infty = std::numeric_limits<double>::infinity(); // GLPK uses +/- inf for bounds
-
-    auto *lp = glp_create_prob(); // Create problem
-    if (lp == nullptr)            // Failed to create problem
-        return lp;
-
-    const uint32_t nCol = net->numberOfTransitions();               // Number of columns
-    const int nRow = net->numberOfPlaces();                         // Number of rows
-    std::vector<int32_t> indir(std::max<uint32_t>(nCol, nRow) + 1); // Index array
-
-    glp_add_cols(lp, nCol + 1); // Add columns
-    glp_add_rows(lp, nRow + 1); // Add rows
-    {
-        std::vector<double> col = std::vector<double>(nRow + 1); // Column array. We add 1 to avoid 0 indexing
-        for (size_t t = 0; t < net->numberOfTransitions(); ++t)
-        {
-            auto pre = net->preset(t);   // Get the preset of the transition
-            auto post = net->postset(t); // Get the postset of the transition
-            size_t l = 1;                // Index in the column array
-            while (pre.first != pre.second ||
-                   post.first != post.second) // While we have not reached the end of the preset or postset
-            {
-                if (pre.first == pre.second || (post.first != post.second && post.first->place < pre.first->place))
-                {
-                    col[l] = post.first->tokens;      // Add the number of tokens in the postset
-                    indir[l] = post.first->place + 1; // Add the place index
-                    ++post.first;                     // Move to the next element in the postset
-                }
-                else if (post.first == post.second || (pre.first != pre.second && pre.first->place < post.first->place))
-                {
-                    if (!pre.first->inhibitor) // If the place is not an inhibitor
-                        col[l] = -(double)pre.first->tokens;
-                    else
-                        col[l] = 0;                  // If the place is an inhibitor, we do not add it to the column
-                    indir[l] = pre.first->place + 1; // Add the place index
-                    ++pre.first;
-                }
-                else
-                {
-                    assert(pre.first->place == post.first->place);
-                    if (!pre.first->inhibitor)
-                        col[l] = (double)post.first->tokens - (double)pre.first->tokens;
-                    else
-                        col[l] = (double)post.first->tokens;
-                    indir[l] = pre.first->place + 1;
-                    ++pre.first;
-                    ++post.first;
-                }
-                ++l;
-            }
-
-            glp_set_mat_col(lp, t + 1, l - 1, indir.data(), col.data()); // Set the column in the LP matrix
-        }
-    }
-    int rowno = 1;
-    for (size_t p = 0; p < net->numberOfPlaces(); p++)
-    {
-        glp_set_row_bnds(lp, rowno, GLP_LO, (0.0 - (double)marking[p]), infty);
-        ++rowno;
-    }
-    return lp;
-}
-
-bool isImpossible(PetriNet *net, equation_t equation, MarkVal *marking)
-{
-    constexpr auto infty = std::numeric_limits<double>::infinity();
-    int result;
-
-    const uint32_t nCol = net->numberOfTransitions();
-    const uint32_t nRow = net->numberOfPlaces() + 1;
-
-    std::vector<double> row = std::vector<double>(nCol + 1); // Row to add to the matrix
-    std::vector<int32_t> indir(std::max(nCol, nRow) + 1);    // Indexes of the row
-    for (size_t i = 0; i <= nCol; ++i)
-        indir[i] = i;
-
-    auto *lp = glp_create_prob();
-    auto base_lp = buildBase(net, marking);
-
-    glp_copy_prob(lp, base_lp, GLP_OFF);
-    if (lp == nullptr) // If we could not create a new LP, we return false
-        return false;
-
-    int rowno = 1 + net->numberOfPlaces();
-    glp_add_rows(lp, 1);
-    auto l = equation.row->write_indir(row, indir);                      // l is the number of elements in the row (excluding the constant)
-    assert(!(std::isinf(equation.upper) && std::isinf(equation.lower))); // We should not have infinite bounds
-    glp_set_mat_row(lp, rowno, l - 1, indir.data(), row.data());         // lp is the LP, rowno is the row number, l-1 is the number of elements in the row, indir is the indexes of the row, and row is the row
-    if (!std::isinf(equation.lower) && !std::isinf(equation.upper))      // If the lower and upper bound is not infinite
-    {
-        if (equation.lower == equation.upper)                                    // If the lower and upper bound is the same
-            glp_set_row_bnds(lp, rowno, GLP_FX, equation.lower, equation.upper); // lp is the LP, rowno is the row number, GLP_FX is the type of bound, eq.lower is the lower bound, and eq.upper is the upper bound
-        else
-        {
-            if (equation.lower > equation.upper)
-            {
-                result = 1;
-                glp_delete_prob(lp); // Delete the LP
-                return true;
-            }
-            glp_set_row_bnds(lp, rowno, GLP_DB, equation.lower, equation.upper); // GLP_DB is lb <= x <= ub whereas GLP_FX is x = c (lb = ub = c)
-        }
-    }
-    else if (std::isinf(equation.lower))                             // If the lower bound is infinite
-        glp_set_row_bnds(lp, rowno, GLP_UP, -infty, equation.upper); // GLP_UP is x <= ub where GLP_UP is -infty <= x <= ub
-    else
-        glp_set_row_bnds(lp, rowno, GLP_LO, equation.lower, -infty);
-    ++rowno;
-
-    // Set objective, kind and bounds
-    for (size_t i = 1; i <= nCol; i++)
-    {
-        glp_set_obj_coef(lp, i, 0);                      // Set the objective coefficient of the i'th column to 0
-        glp_set_col_kind(lp, i, true ? GLP_IV : GLP_CV); // Set the kind of the i'th column to GLP_IV if use_ilp is true, otherwise GLP_CV. GLP_IV is integer, GLP_CV is continuous
-        glp_set_col_bnds(lp, i, GLP_LO, 0, infty);       // Set the bounds of the i'th column to 0 <= x <= infty
-    }
-
-    // Use MIP Solver
-    glp_set_obj_dir(lp, GLP_MIN);                 // GLP_MIN is minimize the objective
-    glp_smcp settings;                            // Settings for the solver
-    glp_init_smcp(&settings);                     // Initialize the settings
-    settings.presolve = GLP_OFF;                  // Disable presolving
-    settings.msg_lev = 0;                         // Disable messages
-    auto result_exact = glp_exact(lp, &settings); // The method to solve the LP
-
-    if (result_exact == GLP_ETMLIM)
-    {
-        result = 0;
-        // std::cerr << "glpk: timeout" << std::endl;
-    }
-    else if (result_exact == 0) // If the result is 0, then the LP is feasible
-    {
-        auto status = glp_get_status(lp);
-        if (status == GLP_OPT) // GLP_OPT - solution is integer feasible
-        {
-            glp_iocp iset; // Settings for the ILP solver
-            glp_init_iocp(&iset);
-            iset.msg_lev = 0;
-            iset.presolve = GLP_OFF;
-            auto ires = glp_intopt(lp, &iset); // Solve the ILP using the branch and bound method
-            // The difference between Branch and bound method and simplex method is that the branch and bound method is used to find the optimal solution to the ILP whereas the simplex method is used to find a feasible solution to the LP
-            if (ires == GLP_ETMLIM) // GLP_ETMLIM - time limit exceeded
-            {
-                result = 0;
-                // std::cerr << "glpk mip: timeout" << std::endl;
-            }
-            else if (ires == 0) // If 0, ILP is feasible
-            {
-                auto ist = glp_mip_status(lp); // Get the status of the ILP
-                if (ist == GLP_OPT || ist == GLP_FEAS || ist == GLP_UNBND)
-                {
-                    result = 2;
-                }
-                else
-                {
-                    result = 1;
-                }
-            }
-        }
-        else if (status == GLP_FEAS || status == GLP_UNBND)
-        {
-            result = 2;
-        }
-        else
-            result = 1;
-    }
-    else if (result_exact == GLP_ENOPFS || result_exact == GLP_ENODFS || result_exact == GLP_ENOFEAS) // GLP_ENOPFS - no primal feasible solution, GLP_ENODFS - no dual feasible solution, GLP_ENOFEAS - no primal or dual feasible solution
-    {
-        result = 1;
-    }
-
-    if (result == 2)
-    {
-        std::vector<double> vect;
-        for (size_t i = 1; i <= nCol; i++)
-        {
-            double col_prim = glp_mip_col_val(lp, i); // Get the value of the i'th column in the optimal solution
-            if (col_prim > 0)
-            {
-                vect.push_back(col_prim);
-            }
-            auto x = 0.0;
-        }
-        auto x1 = vect.size();
-        auto s = 0.0;
-    }
-
-    glp_delete_prob(lp); // Delete the LP
-
-    return result == 1; // Return true if the result is impossible, otherwise false (i.e. if the result is possible or unknown)
 }
