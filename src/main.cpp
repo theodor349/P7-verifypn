@@ -58,7 +58,12 @@ using namespace PetriEngine::Reachability;
 // ******************* * * * INTEGER LINEAR PROGRAMMING * * * ******************** //
 // ******************************************************************************* //
 
-uint32_t getConstant(PetriNet *net, MarkVal *marking, Condition_ptr condition, options_t &options)
+// (const MarkVal *marking,
+//                       const PetriNet *net,
+//                       std::vector<PetriEngine::PQL::Condition_ptr> &queries,
+//                       options_t &options, std::ostream &outstream)
+
+std::vector<uint32_t> getConstant(PetriNet *net, MarkVal *marking, Condition_ptr condition, options_t &options)
 {
     // Step 1: Create the simplification context
     // -----------------------------------------
@@ -72,7 +77,9 @@ uint32_t getConstant(PetriNet *net, MarkVal *marking, Condition_ptr condition, o
     Simplifier simp = Simplifier(simplificationContext);
     Visitor::visit(simp, condition);
 
-    return 0;
+    auto x = simp.get_return_value();
+
+    return simplificationContext.xs;
 }
 
 int main(int argc, const char **argv)
@@ -353,6 +360,10 @@ int main(int argc, const char **argv)
                 if (alldone && options.model_out_file.size() == 0)
                     return to_underlying(ReturnValue::SuccessCode);
             }
+
+            auto initialPotencies = getConstant(qnet.get(), qm0.get(), queries[0], options);
+
+            auto x = 0;
         }
 
         options.queryReductionTimeout = 0;
@@ -372,7 +383,6 @@ int main(int argc, const char **argv)
         printStats(builder, options);
 
         auto net = std::unique_ptr<PetriNet>(builder.makePetriNet());
-        getConstant(net.get(), net->makeInitialMarking(), queries[0], options);
         if (options.model_out_file.size() > 0)
         {
             std::fstream file;

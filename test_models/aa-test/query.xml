@@ -7,12 +7,20 @@
     <formula>
       <exists-path>
         <finally>
-          <integer-eq>
-            <tokens-count>
-              <place>P4</place>
-            </tokens-count>
-            <integer-constant>4</integer-constant>
-          </integer-eq>
+          <conjunction>
+            <integer-eq>
+              <tokens-count>
+                <place>P0</place>
+              </tokens-count>
+              <integer-constant>10</integer-constant>
+            </integer-eq>
+            <integer-eq>
+              <tokens-count>
+                <place>P4</place>
+              </tokens-count>
+              <integer-constant>4</integer-constant>
+            </integer-eq>
+          </conjunction>
         </finally>
       </exists-path>
     </formula>

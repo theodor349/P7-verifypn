@@ -183,18 +183,24 @@ namespace PetriEngine
 
             if (_result == result_t::POSSIBLE)
             {
-                std::vector<double> vect;
+                std::vector<uint32_t> vect(net->numberOfPlaces(), 0);
                 for (size_t i = 1; i <= nCol; i++)
                 {
                     double col_prim = glp_mip_col_val(lp, i); // Get the value of the i'th column in the optimal solution
 
                     if (col_prim > 0)
                     {
-                        vect.push_back(col_prim);
+                        vect[i - 1] = col_prim;
                     }
-                    auto x = 0.0;
                 }
-                auto numberOfFiring = vect.size();
+                context.xs = vect;
+
+                for (size_t i = 0; i < vect.size(); i++)
+                {
+                    std::cout << vect[i] << ' ';
+                }
+                std::cout << '\n';
+
                 auto s = 0.0;
             }
 

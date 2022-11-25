@@ -169,7 +169,7 @@ namespace PetriEngine {
             SimplificationContext(const MarkVal* marking,
                     const PetriNet* net, uint32_t queryTimeout, uint32_t lpTimeout,
                     Simplification::LPCache* cache)
-                    : _queryTimeout(queryTimeout), _lpTimeout(lpTimeout) {
+                    : _queryTimeout(queryTimeout), _lpTimeout(lpTimeout), xs(net->numberOfPlaces()) {
                 _negated = false;
                 _marking = marking;
                 _net = net;
@@ -222,6 +222,8 @@ namespace PetriEngine {
 
 
             glp_prob* makeBaseLP() const;
+
+            mutable std::vector<uint32_t> xs;
 
         private:
             bool _negated;
