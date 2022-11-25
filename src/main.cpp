@@ -63,7 +63,7 @@ using namespace PetriEngine::Reachability;
 //                       std::vector<PetriEngine::PQL::Condition_ptr> &queries,
 //                       options_t &options, std::ostream &outstream)
 
-std::vector<uint32_t> getConstant(PetriNet *net, MarkVal *marking, Condition_ptr condition, options_t &options)
+std::pair<std::vector<uint32_t>, Condition_ptr> getConstant(PetriNet *net, MarkVal *marking, Condition_ptr condition, options_t &options)
 {
     // Step 1: Create the simplification context
     // -----------------------------------------
@@ -77,9 +77,8 @@ std::vector<uint32_t> getConstant(PetriNet *net, MarkVal *marking, Condition_ptr
     Simplifier simp = Simplifier(simplificationContext);
     Visitor::visit(simp, condition);
 
-    auto x = simp.get_return_value();
-
-    return simplificationContext.xs;
+    auto cond_x = simp.get_return_value().formula;
+    return std::make_pair(simplificationContext.xs, cond_x);
 }
 
 int main(int argc, const char **argv)
@@ -361,7 +360,8 @@ int main(int argc, const char **argv)
                     return to_underlying(ReturnValue::SuccessCode);
             }
 
-            auto initialPotencies = getConstant(qnet.get(), qm0.get(), queries[0], options);
+            auto [initialPotencies, condition] = getConstant(qnet.get(), qm0.get(), queries[0], options);
+            queries[0] = condition;
 
             auto x = 0;
         }
