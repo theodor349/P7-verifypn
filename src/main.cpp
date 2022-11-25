@@ -271,6 +271,8 @@ int main(int argc, const char **argv)
 
             // simplification. We always want to do negation-push and initial marking check.
             simplify_queries(qm0.get(), qnet.get(), queries, options, std::cout);
+            auto [initialPotencies, condition] = getConstant(qnet.get(), qm0.get(), queries[0], options);
+            queries[0] = condition;
 
             if (options.query_out_file.size() > 0)
             {
@@ -359,9 +361,6 @@ int main(int argc, const char **argv)
                 if (alldone && options.model_out_file.size() == 0)
                     return to_underlying(ReturnValue::SuccessCode);
             }
-
-            auto [initialPotencies, condition] = getConstant(qnet.get(), qm0.get(), queries[0], options);
-            queries[0] = condition;
 
             auto x = 0;
         }

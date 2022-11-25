@@ -128,80 +128,82 @@ namespace PetriEngine
             glp_smcp settings;            // Settings for the solver
             glp_init_smcp(&settings);     // Initialize the settings
             auto timeout = std::min(solvetime, context.getLpTimeout()) * 1000;
-            settings.tm_lim = timeout;              // Set the time limit to timeout
-            settings.presolve = GLP_OFF;            // Disable presolving
-            settings.msg_lev = 0;                   // Disable messages
-            auto result = glp_exact(lp, &settings); // The method to solve the LP
+            settings.tm_lim = timeout;                  // Set the time limit to timeout
+            settings.presolve = GLP_OFF;                // Disable presolving
+            settings.msg_lev = 0;                       // Disable messages
+            auto simp_res = glp_simplex(lp, &settings); // Solve the LP
 
-            // Simplex method is used in this case to find a feasible solution to the LP (if one exists) and to determine whether the LP is infeasible or unbounded
-            if (result == GLP_ETMLIM)
+            if (simp_res == GLP_ETMLIM)
             {
-                _result = result_t::UKNOWN;
-                // std::cerr << "glpk: timeout" << std::endl;
             }
-            else if (result == 0) // If the result is 0, then the LP is feasible
+            else if (simp_res == 0)
             {
-                auto status = glp_get_status(lp);
-                if (status == GLP_OPT) // GLP_OPT - solution is integer feasible
+
+                auto result = glp_exact(lp, &settings); // The method to solve the LP
+
+                // Simplex method is used in this case to find a feasible solution to the LP (if one exists) and to determine whether the LP is infeasible or unbounded
+                if (result == GLP_ETMLIM)
                 {
-                    glp_iocp iset; // Settings for the ILP solver
-                    glp_init_iocp(&iset);
-                    iset.msg_lev = 0;
-                    iset.tm_lim = std::max<uint32_t>(timeout - (stime - glp_time()), 1);
-                    iset.presolve = GLP_OFF;
-                    auto ires = glp_intopt(lp, &iset); // Solve the ILP using the branch and bound method
-                    // The difference between Branch and bound method and simplex method is that the branch and bound method is used to find the optimal solution to the ILP whereas the simplex method is used to find a feasible solution to the LP
-                    if (ires == GLP_ETMLIM) // GLP_ETMLIM - time limit exceeded
-                    {
-                        _result = result_t::UKNOWN;
-                        // std::cerr << "glpk mip: timeout" << std::endl;
-                    }
-                    else if (ires == 0) // If 0, ILP is feasible
-                    {
-                        auto ist = glp_mip_status(lp); // Get the status of the ILP
-                        if (ist == GLP_OPT || ist == GLP_FEAS || ist == GLP_UNBND)
-                        {
-                            _result = result_t::POSSIBLE;
-                        }
-                        else
-                        {
-                            _result = result_t::IMPOSSIBLE;
-                        }
-                    }
+                    _result = result_t::UKNOWN;
+                    // std::cerr << "glpk: timeout" << std::endl;
                 }
-                else if (status == GLP_FEAS || status == GLP_UNBND)
+                else if (result == 0) // If the result is 0, then the LP is feasible
                 {
-                    _result = result_t::POSSIBLE;
+                    auto status = glp_get_status(lp);
+                    if (status == GLP_OPT) // GLP_OPT - solution is integer feasible
+                    {
+                        glp_iocp iset; // Settings for the ILP solver
+                        glp_init_iocp(&iset);
+                        iset.msg_lev = 0;
+                        iset.tm_lim = std::max<uint32_t>(timeout - (stime - glp_time()), 1);
+                        iset.presolve = GLP_OFF;
+                        auto ires = glp_intopt(lp, &iset); // Solve the ILP using the branch and bound method
+                        if (ires == GLP_ETMLIM)            // GLP_ETMLIM - time limit exceeded
+                        {
+                            _result = result_t::UKNOWN;
+                            // std::cerr << "glpk mip: timeout" << std::endl;
+                        }
+                        else if (ires == 0) // If 0, ILP is feasible
+                        {
+                            auto ist = glp_mip_status(lp); // Get the status of the ILP
+                            if (ist == GLP_OPT || ist == GLP_FEAS || ist == GLP_UNBND)
+                            {
+                                _result = result_t::POSSIBLE;
+                            }
+                            else
+                            {
+                                _result = result_t::IMPOSSIBLE;
+                            }
+                        }
+                    }
+                    else if (status == GLP_FEAS || status == GLP_UNBND)
+                    {
+                        _result = result_t::POSSIBLE;
+                    }
+                    else
+                        _result = result_t::IMPOSSIBLE;
                 }
-                else
+                else if (result == GLP_ENOPFS || result == GLP_ENODFS || result == GLP_ENOFEAS) // GLP_ENOPFS - no primal feasible solution, GLP_ENODFS - no dual feasible solution, GLP_ENOFEAS - no primal or dual feasible solution
+                {
                     _result = result_t::IMPOSSIBLE;
-            }
-            else if (result == GLP_ENOPFS || result == GLP_ENODFS || result == GLP_ENOFEAS) // GLP_ENOPFS - no primal feasible solution, GLP_ENODFS - no dual feasible solution, GLP_ENOFEAS - no primal or dual feasible solution
-            {
-                _result = result_t::IMPOSSIBLE;
-            }
+                }
 
-            if (_result == result_t::POSSIBLE)
-            {
-                std::vector<uint32_t> vect(net->numberOfPlaces(), 0);
-                for (size_t i = 1; i <= nCol; i++)
+                if (_result == result_t::POSSIBLE)
                 {
-                    double col_prim = glp_mip_col_val(lp, i); // Get the value of the i'th column in the optimal solution
-
-                    if (col_prim > 0)
+                    std::vector<double> struct_vars; // Structural variables
+                    for (size_t i = 1; i <= nCol; i++)
                     {
-                        vect[i - 1] = col_prim;
+                        double col_struct = glp_mip_col_val(lp, i); // Get the value of the i'th column in the optimal solution
+                        struct_vars.push_back(col_struct);
+                        auto x = 0.0;
                     }
+                    for (size_t i = 0; i < struct_vars.size(); i++)
+                    {
+                        std::cout << struct_vars[i] << " ";
+                    }
+                    std::cout << '\n';
+                    auto s = 0.0;
                 }
-                context.xs = vect;
-
-                for (size_t i = 0; i < vect.size(); i++)
-                {
-                    std::cout << vect[i] << ' ';
-                }
-                std::cout << '\n';
-
-                auto s = 0.0;
             }
 
             glp_delete_prob(lp); // Delete the LP
@@ -304,63 +306,70 @@ namespace PetriEngine
                     glp_set_col_kind(tmp_lp, i, GLP_IV);           // Set the kind of the i-th variable to GLP_IV
                     glp_set_col_bnds(tmp_lp, i, GLP_LO, 0, infty); // Set the bounds of the i-th variable to GLP_LO, 0 and infty
                 }
-
-                auto rs = glp_exact(tmp_lp, &settings); // glp_simplex solves the LP problem using the simplex method
-                if (rs == GLP_ETMLIM)
+                auto simp_res = glp_simplex(tmp_lp, &settings); // Solve the LP
+                if (simp_res == GLP_ETMLIM)
                 {
-                    // std::cerr << "glpk: timeout" << std::endl;
                 }
-                else if (rs == 0)
+                else if (simp_res == 0)
                 {
-                    auto status = glp_get_status(tmp_lp);
-                    if (status == GLP_OPT)
+
+                    auto rs = glp_exact(tmp_lp, &settings); // glp_simplex solves the LP problem using the simplex method
+                    if (rs == GLP_ETMLIM)
                     {
-                        glp_iocp isettings;
-                        glp_init_iocp(&isettings);
-                        isettings.tm_lim = std::max<int>(((double)timeout * 1000) - (glp_time() - stime), 1);
-                        isettings.msg_lev = 0;
-                        isettings.presolve = GLP_OFF;
-                        auto rs = glp_intopt(tmp_lp, &isettings); // glp_intopt: Solves an LP problem with the branch-and-bound method
-                        if (rs == GLP_ETMLIM)
+                        // std::cerr << "glpk: timeout" << std::endl;
+                    }
+                    else if (rs == 0)
+                    {
+                        auto status = glp_get_status(tmp_lp);
+                        if (status == GLP_OPT)
                         {
-                            // std::cerr << "glpk mip: timeout" << std::endl;
+                            glp_iocp isettings;
+                            glp_init_iocp(&isettings);
+                            isettings.tm_lim = std::max<int>(((double)timeout * 1000) - (glp_time() - stime), 1);
+                            isettings.msg_lev = 0;
+                            isettings.presolve = GLP_OFF;
+                            auto rs = glp_intopt(tmp_lp, &isettings); // glp_intopt: Solves an LP problem with the branch-and-bound method
+                            if (rs == GLP_ETMLIM)
+                            {
+                                // std::cerr << "glpk mip: timeout" << std::endl;
+                            }
+                            else if (rs == 0)
+                            {
+                                auto status = glp_mip_status(tmp_lp);
+                                if (status == GLP_OPT)
+                                {
+                                    auto org = p0 + glp_mip_obj_val(tmp_lp);
+                                    result[pi].first = std::round(org);
+                                    result[pi].second = all_zero;
+                                }
+                                else if (status != GLP_UNBND && status != GLP_FEAS)
+                                {
+                                    result[pi].first = p0;
+                                    result[pi].second = all_zero;
+                                }
+                            }
                         }
-                        else if (rs == 0)
+                        else if (status == GLP_INFEAS || status == GLP_NOFEAS || status == GLP_UNDEF)
                         {
-                            auto status = glp_mip_status(tmp_lp);
-                            if (status == GLP_OPT)
-                            {
-                                auto org = p0 + glp_mip_obj_val(tmp_lp);
-                                result[pi].first = std::round(org);
-                                result[pi].second = all_zero;
-                            }
-                            else if (status != GLP_UNBND && status != GLP_FEAS)
-                            {
-                                result[pi].first = p0;
-                                result[pi].second = all_zero;
-                            }
+                            result[pi].first = p0;
+                            result[pi].second = all_zero;
                         }
                     }
-                    else if (status == GLP_INFEAS || status == GLP_NOFEAS || status == GLP_UNDEF)
+                    else if (rs == GLP_ENOPFS || rs == GLP_ENODFS || rs == GLP_ENOFEAS)
                     {
                         result[pi].first = p0;
                         result[pi].second = all_zero;
                     }
-                }
-                else if (rs == GLP_ENOPFS || rs == GLP_ENODFS || rs == GLP_ENOFEAS)
-                {
-                    result[pi].first = p0;
-                    result[pi].second = all_zero;
-                }
-                glp_erase_prob(tmp_lp);
-                if (pi == places.size() && result[places.size()].first >= p0)
-                {
-                    return result;
-                }
-                if (pi == places.size() && places.size() == 1)
-                {
-                    result[0] = result[1];
-                    return result;
+                    glp_erase_prob(tmp_lp);
+                    if (pi == places.size() && result[places.size()].first >= p0)
+                    {
+                        return result;
+                    }
+                    if (pi == places.size() && places.size() == 1)
+                    {
+                        result[0] = result[1];
+                        return result;
+                    }
                 }
             }
             return result;

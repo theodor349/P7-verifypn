@@ -8,17 +8,17 @@
       <exists-path>
         <finally>
           <conjunction>
-            <integer-eq>
-              <tokens-count>
-                <place>P0</place>
-              </tokens-count>
-              <integer-constant>10</integer-constant>
-            </integer-eq>
-            <integer-eq>
+            <integer-gt>
               <tokens-count>
                 <place>P4</place>
               </tokens-count>
-              <integer-constant>4</integer-constant>
+              <integer-constant>3</integer-constant>
+            </integer-gt>
+            <integer-eq>
+              <tokens-count>
+                <place>P2</place>
+              </tokens-count>
+              <integer-constant>12</integer-constant>
             </integer-eq>
           </conjunction>
         </finally>
