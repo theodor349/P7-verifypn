@@ -62,6 +62,16 @@ namespace PetriEngine {
                     bool printstats,
                     bool keep_trace,
                     size_t seed);
+            bool reachable_potency(
+                    std::vector<std::shared_ptr<PQL::Condition > >& queries,
+                    std::vector<ResultPrinter::Result>& results,
+                    Strategy strategy,
+                    bool usestubborn,
+                    bool statespacesearch,
+                    bool printstats,
+                    bool keep_trace,
+                    size_t seed,
+                    std::vector<uint32_t> &potencies);
         private:
             struct searchstate_t {
                 size_t expandedStates = 0;
@@ -84,7 +94,8 @@ namespace PetriEngine {
                 std::vector<ResultPrinter::Result> &results,
                 bool usequeries,
                 bool printstats,
-                size_t seed);
+                size_t seed,
+                std::vector<uint32_t> &potencies);
             void printStats(searchstate_t& s, Structures::StateSetInterface*);
             bool checkQueries(  std::vector<std::shared_ptr<PQL::Condition > >&,
                                     std::vector<ResultPrinter::Result>&,
@@ -199,7 +210,7 @@ namespace PetriEngine {
         template<typename Q, typename W, typename G>
         bool ReachabilitySearch::tryReachPotency(std::vector<std::shared_ptr<PQL::Condition>> &queries,
                                                  std::vector<ResultPrinter::Result> &results, bool usequeries,
-                                                 bool printstats, size_t seed)
+                                                 bool printstats, size_t seed, std::vector<uint32_t> &potencies)
         {
             searchstate_t ss;
             ss.enabledTransitionsCount.resize(_net.numberOfTransitions(), 0);
@@ -215,7 +226,7 @@ namespace PetriEngine {
             working.setMarking(_net.makeInitialMarking());
 
             W states(_net, _kbound);
-            Q queue(_net.numberOfTransitions(), seed);
+            Q queue(_net.numberOfTransitions(), potencies, seed);
             G generator = _makeSucGen<G>(_net, queries);
             auto r = states.add(state);
             if (r.first)

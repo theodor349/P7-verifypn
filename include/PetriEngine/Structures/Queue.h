@@ -129,7 +129,7 @@ namespace PetriEngine {
                 potency_t(uint32_t v, size_t p, size_t n) : value(v), prev(p), next(n){};
             };
 
-            PotencyQueue(size_t nTransitions, size_t s = 0);
+            PotencyQueue(size_t nTransitions, std::vector<uint32_t> &potencies, size_t s);
             virtual ~PotencyQueue();
 
             std::tuple<size_t, uint32_t> pop();
@@ -151,7 +151,7 @@ namespace PetriEngine {
         {
         public:
         
-            IncrPotencyQueue(size_t nTransitions, size_t);
+            IncrPotencyQueue(size_t nTransitions, std::vector<uint32_t> &potencies, size_t s);
             virtual ~IncrPotencyQueue();
 
             using PotencyQueue::push;
@@ -162,7 +162,7 @@ namespace PetriEngine {
         class DistPotencyQueue : public PotencyQueue
         {
         public:
-            DistPotencyQueue(size_t nTransitions, size_t);
+            DistPotencyQueue(size_t nTransitions, std::vector<uint32_t> &potencies, size_t s);
             virtual ~DistPotencyQueue();
 
             using PotencyQueue::push;
@@ -173,7 +173,7 @@ namespace PetriEngine {
         class RandomPotencyQueue : public PotencyQueue
         {
         public:
-            RandomPotencyQueue(size_t nTransitions, size_t seed);
+            RandomPotencyQueue(size_t nTransitions, std::vector<uint32_t> &potencies, size_t seed);
             virtual ~RandomPotencyQueue();
 
             using PotencyQueue::push;

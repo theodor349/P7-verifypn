@@ -168,16 +168,48 @@ namespace PetriEngine {
         /*                           POTENCY BOIIS                           */
         /*********************************************************************/
 
-        PotencyQueue::PotencyQueue(size_t nTransitions, size_t s) : _queues(nTransitions)
+        PotencyQueue::PotencyQueue(size_t nTransitions, std::vector<uint32_t> &potencies, size_t s) : _queues(nTransitions)
         {
             _potencies.reserve(nTransitions);
             for (uint32_t i = 0; i < nTransitions; i++)
             {
-                size_t prev = i == 0 ? SIZE_MAX : i - 1;
-                size_t next = i == nTransitions - 1 ? SIZE_MAX : i + 1;
-                _potencies.push_back(potency_t(100, prev, next));
+                uint32_t init_potency = 100 + potencies[i] * 100;
+
+                if (i == 0)
+                {
+                    _potencies.push_back(potency_t(init_potency, SIZE_MAX, SIZE_MAX));
+                    _best = 0;
+                    continue;
+                }
+
+                size_t j = _best;
+
+                while (true)
+                {
+                    if (init_potency > _potencies[j].value)
+                    {
+                        size_t prev = _potencies[j].prev;
+                        size_t next = j;
+                        _potencies[j].prev = i;
+                        _potencies.push_back(potency_t(init_potency, prev, next));
+                        if (prev != SIZE_MAX)
+                            _potencies[prev].next = i;
+                        if (j == _best)
+                            _best = i;
+                        break;
+                    }
+                    else if (_potencies[j].next == SIZE_MAX)
+                    {
+                        _potencies[j].next = i;
+                        _potencies.push_back(potency_t(init_potency, j, SIZE_MAX));
+                        break;
+                    }
+                    else
+                    {
+                        j = _potencies[j].next;
+                    }
+                }
             }
-            _best = 0;
         }
 
         PotencyQueue::~PotencyQueue() {}
@@ -233,7 +265,7 @@ namespace PetriEngine {
             _potencies[b].next = a;
         }
 
-        IncrPotencyQueue::IncrPotencyQueue(size_t nTransitions, size_t) : PotencyQueue(nTransitions) {}
+        IncrPotencyQueue::IncrPotencyQueue(size_t nTransitions, std::vector<uint32_t> &potencies, size_t s) : PotencyQueue(nTransitions, potencies, s) {}
         IncrPotencyQueue::~IncrPotencyQueue() {}
 
         void IncrPotencyQueue::push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
@@ -268,7 +300,7 @@ namespace PetriEngine {
             _size++;
         }
 
-        DistPotencyQueue::DistPotencyQueue(size_t nTransitions, size_t) : PotencyQueue(nTransitions) {}
+        DistPotencyQueue::DistPotencyQueue(size_t nTransitions, std::vector<uint32_t> &potencies, size_t s) : PotencyQueue(nTransitions, potencies, s) {}
         DistPotencyQueue::~DistPotencyQueue() {}
 
         void DistPotencyQueue::push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t,
@@ -306,7 +338,7 @@ namespace PetriEngine {
             _size++;
         }
 
-        RandomPotencyQueue::RandomPotencyQueue(size_t nTransitions, size_t seed) : PotencyQueue(nTransitions), _seed(seed) {
+        RandomPotencyQueue::RandomPotencyQueue(size_t nTransitions, std::vector<uint32_t> &potencies, size_t seed) : PotencyQueue(nTransitions, potencies, seed), _seed(seed) {
             srand(_seed);
         }
         RandomPotencyQueue::~RandomPotencyQueue() {}

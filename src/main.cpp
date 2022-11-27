@@ -217,6 +217,8 @@ int main(int argc, const char **argv)
         }
 
         //----------------------- Query Simplification -----------------------//
+        std::vector<uint32_t> potencies;
+
         bool alldone = options.queryReductionTimeout > 0;
         PetriNetBuilder b2(builder);
         std::set<size_t> initial_marking_solved;
@@ -270,9 +272,11 @@ int main(int argc, const char **argv)
             }
 
             // simplification. We always want to do negation-push and initial marking check.
-            simplify_queries(qm0.get(), qnet.get(), queries, options, std::cout);
-            auto [initialPotencies, condition] = getConstant(qnet.get(), qm0.get(), queries[0], options);
-            queries[0] = condition;
+            // simplify_queries(qm0.get(), qnet.get(), queries, options, std::cout);
+            // auto [initialPotencies, condition] = getConstant(qnet.get(), qm0.get(), queries[0], options);
+            // queries[0] = condition;
+
+            simplify_queries_potency(qm0.get(), qnet.get(), queries, options, std::cout, potencies);
 
             if (options.query_out_file.size() > 0)
             {
@@ -622,15 +626,31 @@ int main(int argc, const char **argv)
                 // Change default place-holder to default strategy
                 if (options.strategy == Strategy::DEFAULT)
                     options.strategy = Strategy::HEUR;
-
+                
                 // Reachability search
-                strategy.reachable(queries, results,
+                if (options.useLPPotencies)
+                {
+                    strategy.reachable_potency(queries, results,
+                                   options.strategy,
+                                   options.stubbornreduction,
+                                   options.statespaceexploration,
+                                   options.printstatistics,
+                                   options.trace != TraceLevel::None,
+                                   options.seed(),
+                                   potencies);
+                }
+                else
+                {
+                    strategy.reachable(queries, results,
                                    options.strategy,
                                    options.stubbornreduction,
                                    options.statespaceexploration,
                                    options.printstatistics,
                                    options.trace != TraceLevel::None,
                                    options.seed());
+                }
+
+                
             }
         }
     }

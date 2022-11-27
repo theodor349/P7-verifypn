@@ -190,19 +190,18 @@ namespace PetriEngine
 
                 if (_result == result_t::POSSIBLE)
                 {
-                    std::vector<double> struct_vars; // Structural variables
+                    std::vector<uint32_t> struct_vars; // Structural variables
                     for (size_t i = 1; i <= nCol; i++)
                     {
                         double col_struct = glp_mip_col_val(lp, i); // Get the value of the i'th column in the optimal solution
-                        struct_vars.push_back(col_struct);
-                        auto x = 0.0;
+                        context.xs[i - 1] += round(col_struct);
                     }
-                    for (size_t i = 0; i < struct_vars.size(); i++)
-                    {
-                        std::cout << struct_vars[i] << " ";
-                    }
-                    std::cout << '\n';
-                    auto s = 0.0;
+                    // context.xs = struct_vars;
+                    // for (size_t i = 0; i < context.xs.size(); i++)
+                    // {
+                    //     std::cout << context.xs[i] << " ";
+                    // }
+                    // std::cout << '\n';
                 }
             }
 

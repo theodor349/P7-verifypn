@@ -122,7 +122,7 @@ namespace PetriEngine {
 #define TRYREACH(X)    if(stubbornreduction) TEMPPAR(X, ReducingSuccessorGenerator) \
                        else TEMPPAR(X, SuccessorGenerator)
 
-#define TRYREACHPARPOTENCY      (queries, results, usequeries, printstats, seed)
+#define TRYREACHPARPOTENCY      (queries, results, usequeries, printstats, seed, potencies)
 #define TEMPPARPOTENCY(X, Y)    if(keep_trace) return tryReachPotency<X, Structures::TracableStateSet, Y>TRYREACHPARPOTENCY ; \
                                 else return tryReachPotency<X, Structures::StateSet, Y> TRYREACHPARPOTENCY;
 #define TRYREACHPOTENCY(X)      if(stubbornreduction) TEMPPARPOTENCY(X, ReducingSuccessorGenerator) \
@@ -143,6 +143,8 @@ namespace PetriEngine {
 
             // if we are searching for bounds
             if(!usequeries) strategy = Strategy::BFS;
+
+            std::vector<uint32_t> potencies(_net.numberOfTransitions(), 0);
 
             switch(strategy)
             {
@@ -166,6 +168,65 @@ namespace PetriEngine {
                     break;
                 case Strategy::RANDOMPOTENCYFS:
                     TRYREACHPOTENCY(RandomPotencyQueue)
+                    break;
+                default:
+                    throw base_error("Unsupported search strategy");
+            }
+        }
+
+
+#define TRYREACHPARX    (queries, results, usequeries, printstats, seed)
+#define TEMPPARX(X, Y)  if(keep_trace) return tryReach<X, Structures::TracableStateSet, Y>TRYREACHPARX ; \
+                       else return tryReach<X, Structures::StateSet, Y> TRYREACHPARX;
+#define TRYREACHX(X)    if(stubbornreduction) TEMPPARX(X, ReducingSuccessorGenerator) \
+                       else TEMPPARX(X, SuccessorGenerator)
+
+#define TRYREACHPARPOTENCYX      (queries, results, usequeries, printstats, seed, potencies)
+#define TEMPPARPOTENCYX(X, Y)    if(keep_trace) return tryReachPotency<X, Structures::TracableStateSet, Y>TRYREACHPARPOTENCYX ; \
+                                else return tryReachPotency<X, Structures::StateSet, Y> TRYREACHPARPOTENCYX;
+#define TRYREACHPOTENCYX(X)      if(stubbornreduction) TEMPPARPOTENCYX(X, ReducingSuccessorGenerator) \
+                                else TEMPPARPOTENCYX(X, SuccessorGenerator)
+
+
+
+        bool ReachabilitySearch::reachable_potency(
+                    std::vector<std::shared_ptr<PQL::Condition > >& queries,
+                    std::vector<ResultPrinter::Result>& results,
+                    Strategy strategy,
+                    bool stubbornreduction,
+                    bool statespacesearch,
+                    bool printstats,
+                    bool keep_trace,
+                    size_t seed,
+                    std::vector<uint32_t> &potencies)
+        {
+            bool usequeries = !statespacesearch;
+
+            // if we are searching for bounds
+            if(!usequeries) strategy = Strategy::BFS;
+
+            switch(strategy)
+            {
+                case Strategy::DFS:
+                    TRYREACHX(DFSQueue)
+                    break;
+                case Strategy::BFS:
+                    TRYREACHX(BFSQueue)
+                    break;
+                case Strategy::HEUR:
+                    TRYREACHX(HeuristicQueue)
+                    break;
+                case Strategy::RDFS:
+                    TRYREACHX(RDFSQueue)
+                    break;
+                case Strategy::INCRPOTENCYFS:
+                    TRYREACHPOTENCYX(IncrPotencyQueue)
+                    break;
+                case Strategy::DISTPOTENCYFS:
+                    TRYREACHPOTENCYX(DistPotencyQueue)
+                    break;
+                case Strategy::RANDOMPOTENCYFS:
+                    TRYREACHPOTENCYX(RandomPotencyQueue)
                     break;
                 default:
                     throw base_error("Unsupported search strategy");

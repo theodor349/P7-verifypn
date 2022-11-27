@@ -169,7 +169,7 @@ namespace PetriEngine {
             SimplificationContext(const MarkVal* marking,
                     const PetriNet* net, uint32_t queryTimeout, uint32_t lpTimeout,
                     Simplification::LPCache* cache)
-                    : _queryTimeout(queryTimeout), _lpTimeout(lpTimeout), xs(net->numberOfPlaces()) {
+                    : _queryTimeout(queryTimeout), _lpTimeout(lpTimeout), xs(net->numberOfTransitions()) {
                 _negated = false;
                 _marking = marking;
                 _net = net;
