@@ -82,11 +82,13 @@ namespace PetriEngine {
 
         void ReachabilitySearch::printStats(searchstate_t& ss, Structures::StateSetInterface* states)
         {
+	    std::cout   << std::fixed;	
             std::cout   << "STATS:\n"
                         << "\tdiscovered states: " << states->discovered() << std::endl
                         << "\texplored states:   " << ss.exploredStates << std::endl
                         << "\texpanded states:   " << ss.expandedStates << std::endl
-                        << "\tmax tokens:        " << states->maxTokens() << std::endl;
+                        << "\tmax tokens:        " << states->maxTokens() << std::endl
+			<< "\tsearch time taken: " << ((double)(ss.endTime - ss.startTime))/CLOCKS_PER_SEC << std::endl;
 
             /*std::cout << "\nTRANSITION STATISTICS\n";
             for (size_t i = 0; i < _net.numberOfTransitions(); ++i) {

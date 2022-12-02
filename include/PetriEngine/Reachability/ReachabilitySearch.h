@@ -79,6 +79,8 @@ namespace PetriEngine {
                 std::vector<size_t> enabledTransitionsCount;
                 size_t heurquery = 0;
                 bool usequeries;
+		clock_t startTime;
+		clock_t endTime;
             };
 
             template<typename Q, typename W = Structures::StateSet, typename G>
@@ -147,6 +149,7 @@ namespace PetriEngine {
             auto r = states.add(state);
             // this can fail due to reductions; we push tokens around and violate K
             if(r.first){
+		ss.startTime = clock();
                 // add initial to states, check queries on initial state
                 _satisfyingMarking = r.second;
                 // check initial marking
@@ -181,6 +184,7 @@ namespace PetriEngine {
                             _satisfyingMarking = res.second;
                             ss.exploredStates++;
                             if (checkQueries(queries, results, working, ss, &states)) {
+				ss.endTime = clock();
                                 printStats(ss, &states);
                                 return true;
                             }
@@ -198,7 +202,8 @@ namespace PetriEngine {
                     results[i] = doCallback(queries[i], i, ResultPrinter::NotSatisfied, ss, &states).first;
                 }
             }
-
+	    
+	    ss.endTime = clock();
             printStats(ss, &states);
             return false;
         }
@@ -231,6 +236,7 @@ namespace PetriEngine {
             auto r = states.add(state);
             if (r.first)
             {
+		ss.startTime = clock();
                 _satisfyingMarking = r.second;
                 if (ss.usequeries)
                 {
@@ -265,6 +271,7 @@ namespace PetriEngine {
                             ss.exploredStates++;
                             if (checkQueries(queries, results, working, ss, &states))
                             {
+				ss.endTime = clock();
                                 printStats(ss, &states);
                                 return true;
                             }
@@ -282,6 +289,7 @@ namespace PetriEngine {
                 }
             }
 
+	    ss.endTime = clock();
 	    printStats(ss, &states);
             return false;
         }
