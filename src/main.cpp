@@ -273,11 +273,7 @@ int main(int argc, const char **argv)
             }
 
             // simplification. We always want to do negation-push and initial marking check.
-            // simplify_queries(qm0.get(), qnet.get(), queries, options, std::cout);
-            // auto [initialPotencies, condition] = getConstant(qnet.get(), qm0.get(), queries[0], options);
-            // queries[0] = condition;
-
-            simplify_queries(qm0.get(), qnet.get(), queries, options, std::cout);
+            simplify_queries_potency(qm0.get(), qnet.get(), queries, options, std::cout, potencies);
 
             if (options.query_out_file.size() > 0)
             {
@@ -366,11 +362,9 @@ int main(int argc, const char **argv)
                 if (alldone && options.model_out_file.size() == 0)
                     return to_underlying(ReturnValue::SuccessCode);
             }
-
-            auto x = 0;
         }
 
-        // options.queryReductionTimeout = 0;
+        options.queryReductionTimeout = 0;
 
         //--------------------- Apply Net Reduction ---------------//
 
@@ -385,13 +379,15 @@ int main(int argc, const char **argv)
         }
 
         printStats(builder, options);
-        builder.initMarking();
 
-        std::vector<uint32_t> p;
         auto net = std::unique_ptr<PetriNet>(builder.makePetriNet());
-        std::unique_ptr<MarkVal[]> m0(net->makeInitialMarking());
 
-        simplify_queries_potency(m0.get(), net.get(), queries, options, std::cout, potencies);
+        auto skippedTransitions = builder.skippedTransitions();
+        for (size_t i = 0; i < skippedTransitions->size(); i++)
+        {
+            potencies[skippedTransitions->at(i)] = UINT32_MAX;
+        }
+        potencies.erase(std::remove(potencies.begin(), potencies.end(), UINT32_MAX), potencies.end());
 
         if (options.model_out_file.size() > 0)
         {

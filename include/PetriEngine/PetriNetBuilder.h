@@ -98,6 +98,10 @@ namespace PetriEngine {
             return reducer.removedTransitions();
         }
 
+        std::vector<uint32_t> *skippedTransitions() {
+            return reducer.skippedTransitions();
+        }
+
         int32_t removedPlaces()
         {
             return reducer.removedPlaces();

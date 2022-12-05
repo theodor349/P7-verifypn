@@ -100,6 +100,10 @@ namespace PetriEngine {
             return _skippedTransitions.size();
         }
 
+        std::vector<uint32_t> *skippedTransitions() {
+            return &_skippedTransitions;
+        }
+
         size_t numberOfSkippedPlaces() const {
             return _skippedPlaces;
         }
