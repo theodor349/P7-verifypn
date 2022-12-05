@@ -227,6 +227,7 @@ int main(int argc, const char **argv)
         {
             std::unique_ptr<PetriNet> qnet(b2.makePetriNet(false));
             std::unique_ptr<MarkVal[]> qm0(qnet->makeInitialMarking());
+
             for (size_t i = 0; i < qnet->numberOfPlaces(); ++i)
                 initial_size += qm0[i];
 
@@ -276,7 +277,7 @@ int main(int argc, const char **argv)
             // auto [initialPotencies, condition] = getConstant(qnet.get(), qm0.get(), queries[0], options);
             // queries[0] = condition;
 
-            simplify_queries_potency(qm0.get(), qnet.get(), queries, options, std::cout, potencies);
+            simplify_queries(qm0.get(), qnet.get(), queries, options, std::cout);
 
             if (options.query_out_file.size() > 0)
             {
@@ -369,7 +370,7 @@ int main(int argc, const char **argv)
             auto x = 0;
         }
 
-        options.queryReductionTimeout = 0;
+        // options.queryReductionTimeout = 0;
 
         //--------------------- Apply Net Reduction ---------------//
 
@@ -384,8 +385,14 @@ int main(int argc, const char **argv)
         }
 
         printStats(builder, options);
+        builder.initMarking();
 
+        std::vector<uint32_t> p;
         auto net = std::unique_ptr<PetriNet>(builder.makePetriNet());
+        std::unique_ptr<MarkVal[]> m0(net->makeInitialMarking());
+
+        simplify_queries_potency(m0.get(), net.get(), queries, options, std::cout, potencies);
+
         if (options.model_out_file.size() > 0)
         {
             std::fstream file;
@@ -626,31 +633,29 @@ int main(int argc, const char **argv)
                 // Change default place-holder to default strategy
                 if (options.strategy == Strategy::DEFAULT)
                     options.strategy = Strategy::HEUR;
-                
+
                 // Reachability search
                 if (options.useLPPotencies)
                 {
                     strategy.reachable_potency(queries, results,
-                                   options.strategy,
-                                   options.stubbornreduction,
-                                   options.statespaceexploration,
-                                   options.printstatistics,
-                                   options.trace != TraceLevel::None,
-                                   options.seed(),
-                                   potencies);
+                                               options.strategy,
+                                               options.stubbornreduction,
+                                               options.statespaceexploration,
+                                               options.printstatistics,
+                                               options.trace != TraceLevel::None,
+                                               options.seed(),
+                                               potencies);
                 }
                 else
                 {
                     strategy.reachable(queries, results,
-                                   options.strategy,
-                                   options.stubbornreduction,
-                                   options.statespaceexploration,
-                                   options.printstatistics,
-                                   options.trace != TraceLevel::None,
-                                   options.seed());
+                                       options.strategy,
+                                       options.stubbornreduction,
+                                       options.statespaceexploration,
+                                       options.printstatistics,
+                                       options.trace != TraceLevel::None,
+                                       options.seed());
                 }
-
-                
             }
         }
     }
