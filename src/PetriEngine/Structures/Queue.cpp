@@ -170,6 +170,10 @@ namespace PetriEngine {
 
         PotencyQueue::PotencyQueue(size_t nTransitions, std::vector<uint32_t> &potencies, size_t s) : _queues(nTransitions)
         {
+	    if (nTransitions == 0){
+		_queues = std::vector<std::priority_queue<weighted_t>>(1);
+		_best = 0;
+	    }
             _potencies.reserve(nTransitions);
             for (uint32_t i = 0; i < nTransitions; i++)
             {
@@ -233,7 +237,7 @@ namespace PetriEngine {
         void PotencyQueue::push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query)
         {
             uint32_t dist = query->distance(*context);
-            _queues[_best].emplace(dist, (uint32_t)id);
+            _queues[_best].emplace(dist, id);
             _size++;
         }
 
@@ -296,7 +300,7 @@ namespace PetriEngine {
                 }
             }
 
-            _queues[t].emplace(dist, (uint32_t)id);
+            _queues[t].emplace(dist, id);
             _size++;
         }
 
@@ -334,7 +338,7 @@ namespace PetriEngine {
                 }
             }
 
-            _queues[t].emplace(dist, (uint32_t)id);
+            _queues[t].emplace(dist, id);
             _size++;
         }
 
@@ -374,7 +378,7 @@ namespace PetriEngine {
                 }
             }
 
-            _queues[t].emplace(dist, (uint32_t)id);
+            _queues[t].emplace(dist, id);
             _size++;
         }
 
@@ -382,7 +386,13 @@ namespace PetriEngine {
         {
             if (_size == 0)
                 return std::make_tuple(PetriEngine::PQL::EMPTY, PetriEngine::PQL::EMPTY);
-            
+
+	    if (_potencies.size() == 0){
+		weighted_t e = _queues[_best].top();
+		_size--;
+		return std::make_tuple(e.item, e.weight);
+	    }
+
             uint32_t n = 0;
             size_t current = SIZE_MAX;
             
