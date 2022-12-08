@@ -148,18 +148,17 @@ namespace PetriEngine {
         {
             if(_queue.empty()) return EMPTY;
 
-            // const int MAX_ITE = 100;
+            const int MAX_ITE = 5;
 
             auto min = _queue.begin();
             auto min_val = *min;
             auto max = _queue.rbegin();
             auto max_val = *max;
 
-            // auto end_ite = _queue.size() < MAX_ITE ? _queue.end() : std::next(min, MAX_ITE)
-
+            auto end_ite = _queue.size() < MAX_ITE ? _queue.end() : std::next(_queue.begin(), MAX_ITE);
 
             uint32_t sum = 0;
-            for (auto i = _queue.begin(); i != _queue.end(); ++i)
+            for (auto i = _queue.begin(); i != end_ite; ++i)
             {
                 sum += (max_val.weight + min_val.weight) - (*i).weight;
             }
@@ -167,7 +166,7 @@ namespace PetriEngine {
             float r = (float) rand()/RAND_MAX;
             r = r * sum;
 
-            for (auto i = _queue.begin(); i != _queue.end(); ++i)
+            for (auto i = _queue.begin(); i != end_ite; ++i)
             {
                 auto el = *i;
                 uint32_t vv = (max_val.weight + min_val.weight) - el.weight;
