@@ -147,9 +147,41 @@ namespace PetriEngine {
         size_t HeuristicQueue::pop()
         {
             if(_queue.empty()) return EMPTY;
-            uint32_t n = _queue.top().item;
-            _queue.pop();
-            return n;
+
+            // const int MAX_ITE = 100;
+
+            auto min = _queue.begin();
+            auto min_val = *min;
+            auto max = _queue.rbegin();
+            auto max_val = *max;
+
+            // auto end_ite = _queue.size() < MAX_ITE ? _queue.end() : std::next(min, MAX_ITE)
+
+
+            uint32_t sum = 0;
+            for (auto i = _queue.begin(); i != _queue.end(); ++i)
+            {
+                sum += (max_val.weight + min_val.weight) - (*i).weight;
+            }
+
+            float r = (float) rand()/RAND_MAX;
+            r = r * sum;
+
+            for (auto i = _queue.begin(); i != _queue.end(); ++i)
+            {
+                auto el = *i;
+                uint32_t vv = (max_val.weight + min_val.weight) - el.weight;
+
+                r -= vv;
+                if (r < 0)
+                {
+                    _queue.extract(i);
+                    return el.item;
+                }
+            }
+
+            _queue.extract(min);
+            return min_val.item;
         }
 
         void HeuristicQueue::push(size_t id, PQL::DistanceContext* context,

@@ -19,6 +19,8 @@
 #include <stack>
 #include <random>
 
+#include <set>
+
 #include "../PQL/PQL.h"
 
 namespace PetriEngine {
@@ -84,9 +86,9 @@ namespace PetriEngine {
                 uint32_t item;
                 weighted_t(uint32_t w, uint32_t i) : weight(w), item(i) {};
                 bool operator <(const weighted_t& y) const {
-                    if(weight == y.weight) return item < y.item;// do dfs if they match
+                    if(weight == y.weight) return item > y.item;// do dfs if they match
 //                    if(weight == y.weight) return item > y.item;// do bfs if they match
-                    return weight > y.weight;
+                    return weight < y.weight;
                 }
             };
 
@@ -98,7 +100,7 @@ namespace PetriEngine {
                 const PQL::Condition* query);
             virtual bool empty() const override;
         private:
-            std::priority_queue<weighted_t> _queue;
+            std::multiset<weighted_t> _queue;
         };
 
         /*********************************************************************/

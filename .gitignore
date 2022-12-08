@@ -16,3 +16,5 @@ build/
 
 /.vs
 /src/PetriEngine/.vs
+.vscode/launch.json
+.vscode/settings.json
