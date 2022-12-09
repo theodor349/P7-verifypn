@@ -382,19 +382,24 @@ int main(int argc, const char **argv)
 
         auto net = std::unique_ptr<PetriNet>(builder.makePetriNet());
 
-        auto skippedTransitions = builder.skippedTransitions();
-        for (size_t i = 0; i < skippedTransitions->size(); i++)
-        {
-            potencies[skippedTransitions->at(i)] = UINT32_MAX;
-        }
-        potencies.erase(std::remove(potencies.begin(), potencies.end(), UINT32_MAX), potencies.end());
+        // if (options.useLPPotencies)
+        // {
+        //     auto skippedTransitions = builder.skippedTransitions();
+        //     for (size_t i = 0; i < skippedTransitions->size(); i++)
+        //     {
+        //         potencies[skippedTransitions->at(i)] = UINT32_MAX;
+        //     }
+        //     potencies.erase(std::remove(potencies.begin(), potencies.end(), UINT32_MAX), potencies.end());
 
-        if (options.model_out_file.size() > 0)
-        {
-            std::fstream file;
-            file.open(options.model_out_file, std::ios::out);
-            net->toXML(file);
-        }
+        //     if (options.model_out_file.size() > 0)
+        //     {
+        //         std::fstream file;
+        //         file.open(options.model_out_file, std::ios::out);
+        //         net->toXML(file);
+        //     }
+        // }
+
+        
 
         if (alldone)
             return to_underlying(ReturnValue::SuccessCode);

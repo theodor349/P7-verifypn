@@ -171,8 +171,8 @@ namespace PetriEngine {
         PotencyQueue::PotencyQueue(size_t nTransitions, std::vector<uint32_t> &potencies, size_t s) : _queues(nTransitions)
         {
 	    if (nTransitions == 0){
-		_queues = std::vector<std::priority_queue<weighted_t>>(1);
-		_best = 0;
+            _queues = std::vector<std::priority_queue<weighted_t>>(1);
+            _best = 0;
 	    }
             _potencies.reserve(nTransitions);
             for (uint32_t i = 0; i < nTransitions; i++)

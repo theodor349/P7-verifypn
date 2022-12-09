@@ -13,6 +13,7 @@ src/LTL/SuccessorGeneration/HeuristicLexer.lexer.cpp
 src/LTL/SuccessorGeneration/HeuristicParser.parser.cpp
 src/LTL/SuccessorGeneration/HeuristicParser.parser.hpp
 build/
+bbuild/
 
 /.vs
 /src/PetriEngine/.vs
