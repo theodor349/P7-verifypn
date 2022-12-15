@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<pnml xmlns="http://www.informatik.hu-berlin.de/top/pnml/ptNetb">
+  <net active="true" id="TAPN1" type="P/T net">
+    <place displayName="true" id="P1" initialMarking="19" invariant="&lt; inf" name="P1" nameOffsetX="0" nameOffsetY="0" positionX="240" positionY="345"/>
+    <place displayName="true" id="P2" initialMarking="0" invariant="&lt; inf" name="P2" nameOffsetX="0" nameOffsetY="0" positionX="420" positionY="210"/>
+    <place displayName="true" id="P3" initialMarking="0" invariant="&lt; inf" name="P3" nameOffsetX="0" nameOffsetY="0" positionX="600" positionY="345"/>
+    <transition angle="0" displayName="true" id="T2" infiniteServer="false" name="T2" nameOffsetX="0" nameOffsetY="0" player="0" positionX="240" positionY="210" priority="0" urgent="false"/>
+    <transition angle="0" displayName="true" id="T1" infiniteServer="false" name="T1" nameOffsetX="0" nameOffsetY="0" player="0" positionX="420" positionY="345" priority="0" urgent="false"/>
+    <transition angle="0" displayName="true" id="T3" infiniteServer="false" name="T3" nameOffsetX="0" nameOffsetY="0" player="0" positionX="600" positionY="210" priority="0" urgent="false"/>
+    <arc id="A0" inscription="[0,inf)" nameOffsetX="0" nameOffsetY="0" source="P1" target="T2" type="timed" weight="1">
+      <arcpath arcPointType="false" id="0" xCoord="255" yCoord="345"/>
+      <arcpath arcPointType="false" id="1" xCoord="255" yCoord="240"/>
+    </arc>
+    <arc id="A1" inscription="[0,inf)" nameOffsetX="0" nameOffsetY="0" source="P1" target="T1" type="timed" weight="1">
+      <arcpath arcPointType="false" id="0" xCoord="269" yCoord="359"/>
+      <arcpath arcPointType="false" id="1" xCoord="430" yCoord="355"/>
+    </arc>
+    <arc id="A2" inscription="1" nameOffsetX="0" nameOffsetY="0" source="T2" target="P2" type="normal" weight="1">
+      <arcpath arcPointType="false" id="0" xCoord="259" yCoord="225"/>
+      <arcpath arcPointType="false" id="1" xCoord="420" yCoord="225"/>
+    </arc>
+    <arc id="A3" inscription="1" nameOffsetX="0" nameOffsetY="0" source="T3" target="P3" type="normal" weight="20">
+      <arcpath arcPointType="false" id="0" xCoord="615" yCoord="240"/>
+      <arcpath arcPointType="false" id="1" xCoord="615" yCoord="345"/>
+    </arc>
+    <arc id="A4" inscription="1" nameOffsetX="0" nameOffsetY="0" source="T1" target="P3" type="normal" weight="1">
+      <arcpath arcPointType="false" id="0" xCoord="439" yCoord="360"/>
+      <arcpath arcPointType="false" id="1" xCoord="600" yCoord="360"/>
+    </arc>
+    <arc id="A5" inscription="[0,inf)" nameOffsetX="0" nameOffsetY="0" source="P2" target="T3" type="timed" weight="1">
+      <arcpath arcPointType="false" id="0" xCoord="449" yCoord="224"/>
+      <arcpath arcPointType="false" id="1" xCoord="610" yCoord="220"/>
+    </arc>
+    <arc id="I6" inscription="[0,inf)" nameOffsetX="0" nameOffsetY="0" source="P2" target="T1" type="tapnInhibitor" weight="1">
+      <arcpath arcPointType="false" id="0" xCoord="435" yCoord="240"/>
+      <arcpath arcPointType="false" id="1" xCoord="435" yCoord="345"/>
+    </arc>
+  </net>
+  <query active="true" algorithmOption="CERTAIN_ZERO" approximationDenominator="0" capacity="10000" discreteInclusion="false" enableOverApproximation="false" enableUnderApproximation="false" extrapolationOption="null" gcd="false" hashTableSize="null" inclusionPlaces="*NONE*" name="Query Comment/Name Here" overApproximation="false" pTrie="false" reduction="true" reductionOption="VerifyPN" searchOption="HEURISTIC" symmetry="false" timeDarts="false" traceOption="NONE" type="CTL" useQueryReduction="true" useSiphonTrapAnalysis="false" useStubbornReduction="true" useTarOption="false" useTarjan="true">
+    <formula>
+            
+      <exists-path>
+                
+        <finally>
+                    
+          <integer-ge>
+                        
+            <tokens-count>
+                            
+              <place>TAPN1.P3</place>
+                          
+            </tokens-count>
+                        
+            <integer-constant>20</integer-constant>
+                      
+          </integer-ge>
+                  
+        </finally>
+              
+      </exists-path>
+          
+    </formula>
+  </query>
+  <k-bound bound="3"/>
+  <feature isGame="false" isTimed="false"/>
+</pnml>
